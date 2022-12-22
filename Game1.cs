@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using json_reader;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
+using MarioTest;
 
 namespace TowerDefense
 {
@@ -56,9 +57,9 @@ namespace TowerDefense
         protected override void LoadContent()
         {    
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            AssetManager.LoadTextures(Content);
             path = new SimplePath(graphics.GraphicsDevice);
             path.Clean();
- 
 
             if (File.Exists("Points.csv"))
             {
@@ -99,6 +100,8 @@ namespace TowerDefense
         {
             spriteBatch.Begin();
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            spriteBatch.Draw(AssetManager.backgroundTex, Vector2.Zero, Color.White);
 
             foreach (Vector2 point in points)
             {
