@@ -10,8 +10,19 @@ using System;
 
 namespace TowerDefense
 {
-    internal class Tower
+    internal class Tower : GameObject
     {
+        public Tower(Texture2D tex, Vector2 pos, Rectangle hitBox): base(tex, pos, hitBox) 
+        { }
 
+        public void Update()
+        {
+
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(tex, pos, Color.White);
+        }
     }
 }
