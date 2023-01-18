@@ -32,6 +32,7 @@ namespace TowerDefense
         SlimeEnemy slimeEnemy;
         Tower tower;
         Bullet bullet;
+        FlowerPot pot;
 
         SimplePath path;
         MouseState mouseState, oldMouseState = Mouse.GetState();
@@ -43,11 +44,12 @@ namespace TowerDefense
 
         Rectangle slimeHitBox;
         Rectangle towerHitBox;
-        Rectangle slimeSrcRec;
+        Rectangle potHitBox;
 
         Vector2 slimePos;
         Vector2 towerPos;
         Vector2 bulletPos;
+        Vector2 potPos;
 
         int renderWidth = 800;
         int renderHeight = 500;
@@ -103,13 +105,14 @@ namespace TowerDefense
 
 
            
-            slimeHitBox = new Rectangle((int)slimePos.X, (int)slimePos.Y, AssetManager.slimeRunTex.Width/4-80, AssetManager.slimeRunTex.Height-80);
             slimeEnemy = new SlimeEnemy(AssetManager.slimeRunTex, slimePos, slimeHitBox);
             slimeEnemy.SlimePosForPath(path);
 
             tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox);
 
             bullet = new Bullet(AssetManager.bulletTex, new Vector2(0,0), new Rectangle(0,0,0,0));
+
+            pot = new FlowerPot(AssetManager.potTex, potPos = new Vector2(800, 950), potHitBox);
 
         }
 
@@ -120,8 +123,10 @@ namespace TowerDefense
 
             mouseState = Mouse.GetState();
             tower.Pos = new Vector2(mouseState.X, mouseState.Y);
-
+           
+            slimeEnemy.HitBox = new Rectangle((int)slimePos.X, (int)slimePos.Y, AssetManager.slimeRunTex.Width / 4 - 80 , AssetManager.slimeRunTex.Height - 80);
             tower.HitBox = new Rectangle(mouseState.X, mouseState.Y, AssetManager.towerTex.Width, AssetManager.towerTex.Height);
+            pot.HitBox = new Rectangle((int)potPos.X, (int)potPos.Y, AssetManager.potTex.Width, AssetManager.potTex.Height);
 
             if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
             {
@@ -169,13 +174,9 @@ namespace TowerDefense
             }
 
             slimeEnemy.Draw(spriteBatch, path);
-            //if (CanPlace(tower))
-            {
-                tower.Draw(spriteBatch);
-            }
-
-            bullet.Draw(spriteBatch); 
-            spriteBatch.Draw(AssetManager.potTex, Vector2.Zero, Color.White);
+            tower.Draw(spriteBatch);
+            bullet.Draw(spriteBatch);
+            pot.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);
@@ -222,7 +223,7 @@ namespace TowerDefense
             {
                 gameObject.Draw(spriteBatch);
             }
-            spriteBatch.Draw(AssetManager.backgroundTex, Vector2.Zero, Color.White);
+            //spriteBatch.Draw(AssetManager.renderBackGroundTex, Vector2.Zero, Color.White); //Equivelent till bakgrunden här
 
 
             spriteBatch.End();

@@ -24,5 +24,13 @@ namespace TowerDefense
         {
             spriteBatch.Draw(tex, pos, Color.White);
         }
+
+        public void PlantingFlower(FlowerPot pot)
+        {
+            if (hitBox.Intersects(pot.HitBox))
+            {
+                pos = pot.Pos;
+            }
+        }
     }
 }

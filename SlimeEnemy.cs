@@ -20,8 +20,8 @@ namespace TowerDefense
 
         public float steps;
 
-        private int frame = 200;
-        private double frameTimer, frameInterval = 200;
+        private int frame = 100;
+        private double frameTimer, frameInterval = 100;
 
 
         public SlimeEnemy(Texture2D tex,
@@ -29,7 +29,7 @@ namespace TowerDefense
             Rectangle hitBox) 
             : base(tex, pos, hitBox)
         {
-            srcRec = new Rectangle(0, 0, AssetManager.slimeRunTex.Width / 4 + 6, AssetManager.slimeRunTex.Height);
+            srcRec = new Rectangle(0, 0, AssetManager.slimeRunTex.Width / 4, AssetManager.slimeRunTex.Height);
 
         } 
 
@@ -60,7 +60,7 @@ namespace TowerDefense
                     0,
                     new Vector2(35, 50),
                     1,
-                    SpriteEffects.None,
+                    spriteEffects,
                     0);
             }
 
@@ -79,7 +79,7 @@ namespace TowerDefense
             {
                 frameTimer = frameInterval;
                 frame++;
-                srcRec.X = (frame % 4) * (AssetManager.bulletTex.Width / 4 + 6);
+                srcRec.X = (frame % 4) * (AssetManager.bulletTex.Width / 4);
             }
         }
     }
