@@ -25,6 +25,7 @@ namespace TowerDefense
 {
     public class Game1 : Game
     {
+        //Decreasement for-loop istället för incr. 
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private RenderTarget2D renderTarget;
