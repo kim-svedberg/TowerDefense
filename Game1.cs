@@ -30,7 +30,7 @@ namespace TowerDefense
         private SpriteBatch spriteBatch;
         private RenderTarget2D renderTarget;
 
-        SlimeEnemy slimeEnemy;
+        EnemyManager enemyManager = new EnemyManager();
         Tower tower;
         Bullet bullet;
 
@@ -102,15 +102,17 @@ namespace TowerDefense
                 }
             }
 
+            enemyManager.AddEnemies();
 
+            foreach(SlimeEnemy slime in enemyManager.slimeEnemyList) 
+            {
+                slime.SlimePosForPath(path);
+            }
 
            
-            slimeEnemy = new SlimeEnemy(AssetManager.slimeRunTex, slimePos, slimeHitBox);
-            slimeEnemy.SlimePosForPath(path);
 
             tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox);
 
-            bullet = new Bullet(AssetManager.bulletTex, new Vector2(0,0), new Rectangle(0,0,0,0));
 
         }
 
@@ -126,7 +128,13 @@ namespace TowerDefense
 
             tower.Pos = new Vector2(mouseState.X, mouseState.Y);
            
-            slimeEnemy.HitBox = new Rectangle((int)slimePos.X, (int)slimePos.Y, AssetManager.slimeRunTex.Width / 4 - 80 , AssetManager.slimeRunTex.Height - 80);
+            foreach(SlimeEnemy slime in enemyManager.slimeEnemyList)
+            {
+
+                slime.HitBox = new Rectangle((int)slimePos.X, (int)slimePos.Y, AssetManager.slimeRunTex.Width / 4 - 80 , AssetManager.slimeRunTex.Height - 80);
+
+            }
+
             tower.HitBox = new Rectangle(mouseState.X, mouseState.Y, AssetManager.towerTex.Width, AssetManager.towerTex.Height);
 
             if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released && CanPlace(tower))
@@ -149,7 +157,13 @@ namespace TowerDefense
 
             oldMouseState = Mouse.GetState();
 
-            slimeEnemy.Update(gameTime, path);
+            foreach(SlimeEnemy slime in enemyManager.slimeEnemyList)
+            {
+
+                slime.Update(gameTime, path);
+
+            }
+
             bullet.Update(gameTime);
             base.Update(gameTime);
         }
@@ -179,7 +193,12 @@ namespace TowerDefense
                 gameObject.Draw(spriteBatch);
             }
 
-            slimeEnemy.Draw(spriteBatch, path);
+            foreach(SlimeEnemy slime in enemyManager.slimeEnemyList)
+            {
+
+                slime.Draw(spriteBatch, path);
+
+            }
             tower.Draw(spriteBatch);
             bullet.Draw(spriteBatch);
 

@@ -24,9 +24,8 @@ namespace TowerDefense
 
         Random rnd = new Random();
 
-        public Bullet(Texture2D tex, Vector2 pos, Rectangle hitBox, float speed, List<SlimeEnemy> slimeEnemyList) : base(tex, pos, hitBox)
+        public Bullet(Texture2D tex, Vector2 pos, Rectangle hitBox, List<SlimeEnemy> slimeEnemyList) : base(tex, pos, hitBox)
         {
-            this.speed = speed;
             srcRec = new Rectangle(0, 0, AssetManager.bulletTex.Width / 6, AssetManager.bulletTex.Height);
         }
 
