@@ -157,7 +157,7 @@
 /processorParam:TextureFormat=Color
 /build:truebgPOTS.png
 
-#begin truebgPOTStrans.png
+#begin truetransparentBG.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -167,5 +167,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:truebgPOTStrans.png
+/build:truetransparentBG.png
 

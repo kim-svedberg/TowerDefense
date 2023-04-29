@@ -12,25 +12,27 @@ namespace TowerDefense
 {
     internal class Tower : GameObject
     {
+        public Color color;
         public Tower(Texture2D tex, Vector2 pos, Rectangle hitBox): base(tex, pos, hitBox) 
-        { }
+        {
+            //this.color = color;
+        }
 
         public void Update()
         {
-
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(tex, pos, Color.White);
+            spriteBatch.Draw(tex, pos, color);
         }
 
-        public void PlantingFlower(FlowerPot pot)
+        public Vector2 GetDirection(Vector2 targetPos)
         {
-            if (hitBox.Intersects(pot.HitBox))
-            {
-                pos = pot.Pos;
-            }
+            Vector2 normalizedVector = Vector2.Normalize(targetPos - pos);
+            return normalizedVector;
         }
+
+
     }
 }

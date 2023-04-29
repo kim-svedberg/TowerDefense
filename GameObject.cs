@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace TowerDefense
 {
-    internal class GameObject
+    public class GameObject
     {
         protected Texture2D tex;
         protected Vector2 pos;

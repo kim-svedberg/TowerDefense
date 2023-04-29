@@ -22,7 +22,7 @@ namespace MarioTest
         public static void LoadTextures(ContentManager content)
         {
             backgroundTex = content.Load<Texture2D>("truebg");
-            renderBackGroundTex = content.Load<Texture2D>("truebgPOTStrans");
+            renderBackGroundTex = content.Load<Texture2D>("truetransparentBG");
             slimeRunTex = content.Load<Texture2D>("Slime_Spiked_Run");
             towerTex = content.Load<Texture2D>("flower8BIG");
             bulletTex = content.Load<Texture2D>("sparklesprite");

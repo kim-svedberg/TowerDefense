@@ -33,10 +33,10 @@ namespace TowerDefense
         SlimeEnemy slimeEnemy;
         Tower tower;
         Bullet bullet;
-        FlowerPot pot;
 
         SimplePath path;
         MouseState mouseState, oldMouseState = Mouse.GetState();
+        KeyboardState keyState, oldKeyState = Keyboard.GetState();
         
         List<string> stringofPoints = new List<string>();
         List<Vector2> points;
@@ -54,7 +54,6 @@ namespace TowerDefense
 
         int renderWidth = 800;
         int renderHeight = 500;
-
 
         public Game1()
         {
@@ -113,8 +112,6 @@ namespace TowerDefense
 
             bullet = new Bullet(AssetManager.bulletTex, new Vector2(0,0), new Rectangle(0,0,0,0));
 
-            pot = new FlowerPot(AssetManager.potTex, potPos = new Vector2(800, 950), potHitBox);
-
         }
 
         protected override void Update(GameTime gameTime)
@@ -123,29 +120,37 @@ namespace TowerDefense
                 Exit();
 
             mouseState = Mouse.GetState();
+            keyState = Keyboard.GetState();
+
+
+
             tower.Pos = new Vector2(mouseState.X, mouseState.Y);
            
             slimeEnemy.HitBox = new Rectangle((int)slimePos.X, (int)slimePos.Y, AssetManager.slimeRunTex.Width / 4 - 80 , AssetManager.slimeRunTex.Height - 80);
             tower.HitBox = new Rectangle(mouseState.X, mouseState.Y, AssetManager.towerTex.Width, AssetManager.towerTex.Height);
-            pot.HitBox = new Rectangle((int)potPos.X, (int)potPos.Y, AssetManager.potTex.Width, AssetManager.potTex.Height);
 
-            if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+            if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released && CanPlace(tower))
             {
-                bool can = CanPlace(tower);
-                if (can)
-                {
-                    objectList.Add(tower);
+                tower.color = Color.White;
+                objectList.Add(tower);
+                tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox);
 
-                    tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox);
+            }
 
-                }
+            if (CanPlace(tower))
+            {
+                tower.color = Color.LightGreen;
+
+            }
+            else if (!CanPlace(tower))
+            {
+                tower.color = Color.MediumVioletRed;
             }
 
             oldMouseState = Mouse.GetState();
 
             slimeEnemy.Update(gameTime, path);
             bullet.Update(gameTime);
-
             base.Update(gameTime);
         }
 
@@ -177,7 +182,6 @@ namespace TowerDefense
             slimeEnemy.Draw(spriteBatch, path);
             tower.Draw(spriteBatch);
             bullet.Draw(spriteBatch);
-            pot.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);
@@ -224,14 +228,14 @@ namespace TowerDefense
             {
                 gameObject.Draw(spriteBatch);
             }
-            //spriteBatch.Draw(AssetManager.renderBackGroundTex, Vector2.Zero, Color.White); //Equivelent till bakgrunden här
+            spriteBatch.Draw(AssetManager.renderBackGroundTex, Vector2.Zero, Color.White); //Equivelent till bakgrunden här
 
 
             spriteBatch.End();
 
             GraphicsDevice.SetRenderTarget(null);
         }
-        internal bool CanPlace(GameObject gameObject)
+        public bool CanPlace(GameObject gameObject)
         {
             Color[] targetPixels = new Color[gameObject.Texture.Width * gameObject.Texture.Height];
             Color[] pixels2 = new Color[targetPixels.Length];
