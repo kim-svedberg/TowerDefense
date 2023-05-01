@@ -16,10 +16,10 @@ namespace TowerDefense
         {
             for (int i = 0; i < 3; i++)
             {
-                SlimeEnemy slimeEnemy = new SlimeEnemy(AssetManager.slimeRunTex, pos, hitBox));
-                slimeEnemyList.Add(slimeEnemy);
+                slimeEnemyList.Add(new SlimeEnemy(AssetManager.slimeRunTex, pos, hitBox));
 
             }
         }
     }
 }
+

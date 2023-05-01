@@ -31,10 +31,10 @@ namespace TowerDefense
         private RenderTarget2D renderTarget;
 
         EnemyManager enemyManager = new EnemyManager();
+        BulletManager bulletManager = new BulletManager();
         Tower tower;
-        Bullet bullet;
 
-        SimplePath path;
+        public SimplePath path;
         MouseState mouseState, oldMouseState = Mouse.GetState();
         KeyboardState keyState, oldKeyState = Keyboard.GetState();
         
@@ -45,15 +45,16 @@ namespace TowerDefense
 
         Rectangle slimeHitBox;
         Rectangle towerHitBox;
-        Rectangle potHitBox;
 
         Vector2 slimePos;
         Vector2 towerPos;
-        Vector2 bulletPos;
-        Vector2 potPos;
 
         int renderWidth = 800;
         int renderHeight = 500;
+
+        float shootDelay;
+        float bulletExistingTime;
+        bool placed;
 
         public Game1()
         {
@@ -102,7 +103,7 @@ namespace TowerDefense
                 }
             }
 
-            enemyManager.AddEnemies();
+            enemyManager.AddEnemies(slimePos, slimeHitBox);
 
             foreach(SlimeEnemy slime in enemyManager.slimeEnemyList) 
             {
@@ -113,7 +114,6 @@ namespace TowerDefense
 
             tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox);
 
-
         }
 
         protected override void Update(GameTime gameTime)
@@ -121,10 +121,10 @@ namespace TowerDefense
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            float deltaTime = gameTime.GetElapsedSeconds();
+
             mouseState = Mouse.GetState();
             keyState = Keyboard.GetState();
-
-
 
             tower.Pos = new Vector2(mouseState.X, mouseState.Y);
            
@@ -142,6 +142,7 @@ namespace TowerDefense
                 tower.color = Color.White;
                 objectList.Add(tower);
                 tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox);
+                placed = true;
 
             }
 
@@ -164,7 +165,33 @@ namespace TowerDefense
 
             }
 
-            bullet.Update(gameTime);
+            foreach(Bullet bullet in bulletManager.bulletList)
+            {
+
+                bullet.Update(gameTime);
+
+            }
+
+            foreach(Tower tower in objectList)
+            {
+                if (placed)
+                {
+                    shootDelay -= deltaTime;
+                    if (shootDelay <= 0)
+                    {
+                        shootDelay = 2;
+
+                        for (int i = 0; i < 100; i++)
+                        {
+                            bulletManager.CreateBullet(tower, enemyManager.slimeEnemyList, gameTime);
+                        }
+                    }
+
+                }
+            }
+
+          
+           
             base.Update(gameTime);
         }
 
@@ -199,8 +226,14 @@ namespace TowerDefense
                 slime.Draw(spriteBatch, path);
 
             }
+
             tower.Draw(spriteBatch);
-            bullet.Draw(spriteBatch);
+
+            foreach (Bullet bullet in bulletManager.bulletList)
+            {
+                bullet.Draw(spriteBatch);
+
+            }
 
             spriteBatch.End();
             base.Draw(gameTime);
@@ -274,7 +307,7 @@ namespace TowerDefense
             }
             return true;
 
-        } //TODO: Placera dirtpiles eller liknande i bilden där du kommer kunna sätt ut bilderna. Skapa sen en kopia av bilderna fast dirt pile:sen är transparanta & lägg in den i RenderTarget.
+        } 
 
     }
 }

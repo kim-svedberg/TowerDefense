@@ -20,7 +20,7 @@ namespace TowerDefense
         private double frameTimer, frameInterval = 100;
 
         public Vector2 direction;
-        float speed = 1;
+        float speed = 3;
 
         Random rnd = new Random();
 
