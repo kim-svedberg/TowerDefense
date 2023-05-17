@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using MonoGame.Extended.Timers;
 using Spline;
 using System;
 using System.Collections.Generic;
@@ -123,75 +124,18 @@ namespace TowerDefense
 
             tower.Pos = new Vector2(mouseState.X, mouseState.Y);
 
-            spawnTimer -= deltaTime;
-            if (spawnTimer <= 0)
-            {
-                slimeEnemy = new SlimeEnemy(AssetManager.slimeRunTex, slimePos, slimeHitBox);
-                enemyManager.AddEnemy(slimeEnemy);
-                spawnTimer = 100000f;
-            }
 
             mouseState = Mouse.GetState();
             keyState = Keyboard.GetState();
+
+            SpawnEnemies(deltaTime);
+            PlacingTower(gameTime, deltaTime);
 
             //if (bullet != null)
             {
                 bulletManager.Update(gameTime);
                 bulletManager.HitTarget(enemyManager.slimeEnemyList, gameTime, deltaTime);
 
-            }
-
-            if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released && CanPlace(tower))
-            {
-                tower.color = Color.White;
-                objectList.Add(tower);
-                placed = true;
-                tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox, placed);
-
-            }
-
-            if (CanPlace(tower))
-            {
-                tower.color = Color.LightGreen;
-
-            }
-            else if (!CanPlace(tower))
-            {
-                tower.color = Color.MediumVioletRed;
-            }
-
-            oldMouseState = Mouse.GetState();
-
-            foreach (SlimeEnemy slime in enemyManager.slimeEnemyList)
-            {
-
-                slime.Update(gameTime, path);
-
-            }
-
-            foreach (Bullet bullet in bulletManager.bulletList)
-            {
-
-                bullet.Update(gameTime);
-
-            }
-
-            foreach (Tower tower in objectList)
-            {
-                if (placed)
-                {
-                    shootDelay -= deltaTime;
-                    if (shootDelay <= 0)
-                    {
-                        shootDelay = 2;
-
-                        //for (int i = 0; i < 100; i++)
-                        {
-                            CreateBullet(tower, enemyManager.slimeEnemyList, gameTime);
-                        }
-                    }
-
-                }
             }
 
 
@@ -334,6 +278,71 @@ namespace TowerDefense
             if (lastSlime != null)
             {
                 bullet.direction = lastSlime.Pos;
+            }
+        }
+        internal void SpawnEnemies(float deltaTime)
+        {
+            spawnTimer -= deltaTime;
+            if (spawnTimer <= 0)
+            {
+                slimeEnemy = new SlimeEnemy(AssetManager.slimeRunTex, slimePos, slimeHitBox);
+                enemyManager.AddEnemy(slimeEnemy);
+                spawnTimer = 3f;
+            }
+        }
+        internal void PlacingTower(GameTime gameTime, float deltaTime)
+        {
+            if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released && CanPlace(tower))
+            {
+                tower.color = Color.White;
+                objectList.Add(tower);
+                placed = true;
+                tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox, placed);
+
+            }
+
+            if (CanPlace(tower))
+            {
+                tower.color = Color.LightGreen;
+
+            }
+            else if (!CanPlace(tower))
+            {
+                tower.color = Color.MediumVioletRed;
+            }
+
+            oldMouseState = Mouse.GetState();
+
+            foreach (SlimeEnemy slime in enemyManager.slimeEnemyList)
+            {
+
+                slime.Update(gameTime, path);
+
+            }
+
+            foreach (Bullet bullet in bulletManager.bulletList)
+            {
+
+                bullet.Update(gameTime);
+
+            }
+
+            foreach (Tower tower in objectList)
+            {
+                if (placed)
+                {
+                    shootDelay -= deltaTime;
+                    if (shootDelay <= 0)
+                    {
+                        shootDelay = 2;
+
+                        //for (int i = 0; i < 100; i++)
+                        {
+                            CreateBullet(tower, enemyManager.slimeEnemyList, gameTime);
+                        }
+                    }
+
+                }
             }
         }
 
