@@ -13,9 +13,10 @@ namespace TowerDefense
     internal class Tower : GameObject
     {
         public Color color;
-        public Tower(Texture2D tex, Vector2 pos, Rectangle hitBox): base(tex, pos, hitBox) 
+        public bool placed;
+        public Tower(Texture2D tex, Vector2 pos, Rectangle hitBox, bool placed): base(tex, pos, hitBox) 
         {
-            //this.color = color;
+            this.placed = placed;
         }
 
         public void Update()
@@ -25,12 +26,6 @@ namespace TowerDefense
         public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(tex, pos, color);
-        }
-
-        public Vector2 GetDirection(Vector2 targetPos)
-        {
-            Vector2 normalizedVector = Vector2.Normalize(targetPos - pos);
-            return normalizedVector;
         }
 
 

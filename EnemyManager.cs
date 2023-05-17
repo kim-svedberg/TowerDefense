@@ -12,13 +12,9 @@ namespace TowerDefense
     {
         public List<SlimeEnemy> slimeEnemyList = new List<SlimeEnemy>();
 
-        public void AddEnemies(Vector2 pos, Rectangle hitBox)
+        public void AddEnemy(SlimeEnemy slime)
         {
-            for (int i = 0; i < 3; i++)
-            {
-                slimeEnemyList.Add(new SlimeEnemy(AssetManager.slimeRunTex, pos, hitBox));
-
-            }
+            slimeEnemyList.Add(slime);
         }
     }
 }

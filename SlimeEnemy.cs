@@ -23,6 +23,9 @@ namespace TowerDefense
         private int frame = 100;
         private double frameTimer, frameInterval = 100;
 
+        public int health = 3;
+        public float damageCooldown = 3f;
+
 
         public SlimeEnemy(Texture2D tex,
             Vector2 pos, 

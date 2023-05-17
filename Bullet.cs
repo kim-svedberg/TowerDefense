@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace TowerDefense
 {
-    internal class Bullet : Tower
+    internal class Bullet : GameObject
     {
         Rectangle srcRec;
 
@@ -21,6 +21,8 @@ namespace TowerDefense
 
         public Vector2 direction;
         float speed = 3;
+
+        public float existingTime = 3f;
 
         Random rnd = new Random();
 
@@ -35,12 +37,20 @@ namespace TowerDefense
                 pos,
                 srcRec,
                 Color.White);
+            spriteBatch.DrawRectangle(hitBox, Color.Red, 1);
+
         }
         public void Update(GameTime gameTime)
         {
             Animation(gameTime);
             hitBox.Location = new Vector2(pos.X, pos.Y).ToPoint();
             pos += GetDirection(direction) * speed;
+        }
+
+        public Vector2 GetDirection(Vector2 targetPos)
+        {
+            Vector2 normalizedVector = Vector2.Normalize(targetPos - pos);
+            return normalizedVector;
         }
 
         public void Animation(GameTime gameTime)
