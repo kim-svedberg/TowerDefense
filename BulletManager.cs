@@ -1,92 +1,45 @@
-﻿using MarioTest;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended;
-using Spline;
-using System.Collections.Generic;
-using System.Drawing;
-
-
+﻿using System.Collections.Generic;
 
 namespace TowerDefense
 {
-    internal class BulletManager
+    public class BulletManager
     {
-        public List<Bullet> bulletList = new List<Bullet>();
-        List<Bullet> bulletsToRemove = new List<Bullet>();
-        List<SlimeEnemy> enemiesToRemove = new List<SlimeEnemy>();
-        
-        CooldownTimer cooldownTimer = new CooldownTimer();
-        public bool hit;
+        public List<Bullet> bulletList = new();
 
-        public void Update(GameTime gameTime)
+        public void Update(float deltaTime, EnemyManager enemyManager)
         {
-            cooldownTimer.Update(gameTime.ElapsedGameTime.TotalSeconds);
-
-        }
-
-        public void HitTarget(List<SlimeEnemy> slimeEnemyList, GameTime gameTime, float deltaTime)
-        {
-
-            foreach (Bullet bullet in bulletList)
+            for (int i = 0; i < bulletList.Count; i++)
             {
-                foreach (SlimeEnemy enemy in slimeEnemyList)
+                Bullet bullet = bulletList[i];
+                bullet.Update(deltaTime);
+
+                foreach (SlimeEnemy enemy in enemyManager.slimeEnemyList)
                 {
+                    if (!enemy.IsAlive)
+                    {
+                        continue;
+                    }
+
                     if (bullet.HitBox.Intersects(enemy.HitBox))
                     {
-                        bulletsToRemove.Add(bullet);
-                        hit = true;
+                        enemy.health--;
+                        bullet.health--;
 
-                        if (cooldownTimer.IsDone())
+                        if (!bullet.IsAlive)
                         {
-                            enemy.health--;
+                            break;
                         }
-                        else if(!cooldownTimer.IsDone())
-                        {
-                            cooldownTimer.ResetAndStart(1.0);
-                        }
-                    }
-                   
-                    if(enemy.health <= 0)
-                    {
-                        enemiesToRemove.Add(enemy);
-                        break;
-
                     }
                 }
 
-                if (!hit)
+                bullet.existingTime -= deltaTime;
+                if (!bullet.IsAlive)
                 {
-                    bullet.existingTime -= deltaTime;
-
-                    if (bullet.existingTime <= 0)
-                    {
-                        bulletsToRemove.Add(bullet);
-                    }
+                    // Swap last bullet into current slot
+                    bulletList[i] = bulletList[bulletList.Count - 1];
+                    bulletList.RemoveAt(bulletList.Count - 1);
                 }
             }
-
-
-            foreach (Bullet bullet in bulletsToRemove)
-            {
-                DestroyBullet(bullet);
-                bulletList.Remove(bullet);
-            }
-
-            foreach (SlimeEnemy enemy in enemiesToRemove)
-            {
-                slimeEnemyList.Remove(enemy);
-            }
-
-            bulletsToRemove.Clear();
-            enemiesToRemove.Clear();
-
-        }
-        public void DestroyBullet(Bullet bullet)
-        {
-            bulletList.Remove(bullet);
-
         }
 
         //public void CreateBullet(Tower tower, List<SlimeEnemy>slimeEnemyList, GameTime gameTime)

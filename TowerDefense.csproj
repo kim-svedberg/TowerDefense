@@ -24,8 +24,13 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Spline">
-      <HintPath>..\Spline_Exercise\Spline\Spline.dll</HintPath>
+      <HintPath>..\Spline\Spline.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Spline\Points.csv" Link="Points.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />

@@ -1,5 +1,4 @@
-﻿using MarioTest;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
@@ -7,8 +6,6 @@ using Spline;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
-using Keys = Microsoft.Xna.Framework.Input.Keys;
 using WinForm;
 
 namespace TowerDefense
@@ -20,37 +17,29 @@ namespace TowerDefense
         private SpriteBatch spriteBatch;
         private RenderTarget2D renderTarget;
 
-        EnemyManager enemyManager = new EnemyManager();
-        BulletManager bulletManager = new BulletManager();
+        TowerManager towerManager = new();
+        EnemyManager enemyManager = new();
+        BulletManager bulletManager = new();
 
-        Tower tower;
-        SlimeEnemy slimeEnemy;
-        Bullet bullet;
-        Form1 Form1;
+        Tower towerToPlace;
+
+        Form1 form1;
 
         public SimplePath path;
-        MouseState mouseState, oldMouseState = Mouse.GetState();
-        KeyboardState keyState, oldKeyState = Keyboard.GetState();
 
-        List<string> stringofPoints = new List<string>();
+        List<string> stringofPoints = new();
         List<Vector2> points;
-        List<GameObject> objectList = new List<GameObject>();
-        List<Tower> towerList = new List<Tower>();
 
+        Size2 slimeSize;
+        Size2 towerSize;
 
-        Rectangle slimeHitBox;
-        Rectangle towerHitBox;
-
-
-        Vector2 slimePos;
         Vector2 towerPos;
 
         int renderWidth = 800;
         int renderHeight = 500;
 
-        float shootDelay;
-        float spawnTimer = 3f;
-        bool placed;
+        float spawnTimer = 0f;
+        float spawnDelay = 3f;
 
         public Game1()
         {
@@ -63,30 +52,27 @@ namespace TowerDefense
 
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
-            Form1 = new Form1();
+            form1 = new Form1();
+            form1.Show();
         }
 
         private void Window_ClientSizeChanged(object sender, EventArgs e)
         {
             renderTarget = new RenderTarget2D(graphics.GraphicsDevice, Window.ClientBounds.Width, Window.ClientBounds.Height);
-
         }
 
         protected override void Initialize()
         {
-
             base.Initialize();
+
             graphics.ToggleFullScreen();
             graphics.ApplyChanges();
-
-
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             renderTarget = new RenderTarget2D(graphics.GraphicsDevice, renderWidth, renderHeight);
-
 
             AssetManager.LoadTextures(Content);
             path = new SimplePath(graphics.GraphicsDevice);
@@ -105,57 +91,50 @@ namespace TowerDefense
             {
                 slime.SlimePosForPath(path);
             }
-
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            Input.Update();
+
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+                Input.IsKeyDown(Keys.Escape))
                 Exit();
 
             float deltaTime = gameTime.GetElapsedSeconds();
 
-            slimeHitBox = new Rectangle((int)slimePos.X, (int)slimePos.Y, AssetManager.slimeRunTex.Width / 4 - 80, AssetManager.slimeRunTex.Height - 80);
-            
-            towerHitBox = new Rectangle(mouseState.X, mouseState.Y, AssetManager.towerTex.Width, AssetManager.towerTex.Height);
-            towerPos = new Vector2(mouseState.X, mouseState.Y);
-            tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox, placed, bulletManager);
+            slimeSize = new Size2(AssetManager.slimeRunTex.Width / 4 - 80, AssetManager.slimeRunTex.Height - 80);
 
-
-            foreach (SlimeEnemy slime in enemyManager.slimeEnemyList)
-            {
-
-                slime.Update(gameTime, path);
-
-            }
-
-            foreach (Bullet bullet in bulletManager.bulletList)
-            {
-
-                bullet.Update(gameTime);
-
-            }
-
-            mouseState = Mouse.GetState();
-            keyState = Keyboard.GetState();
+            towerSize = new Size2(AssetManager.towerTex.Width, AssetManager.towerTex.Height);
+            towerPos = new Vector2(Input.mouseState.X, Input.mouseState.Y);
 
             //if(keyState.IsKeyDown(Keys.B) && oldKeyState == keyState.IsKeyUp(Keys.B))
             {
                 //Leta upp hur man gör det här. När man trycker på B = spawna towern som ska följa musen. 
                 //tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox, placed, bulletManager);
-
             }
 
             SpawnEnemies(deltaTime);
-            PlacingTower(gameTime, deltaTime);
 
-            //if (bullet != null)
+            if (towerToPlace != null && TryPlaceTower(towerToPlace))
             {
-                bulletManager.Update(gameTime);
-                bulletManager.HitTarget(enemyManager.slimeEnemyList, gameTime, deltaTime);
-
+                towerToPlace = null;
             }
 
+            if (towerToPlace == null)
+            {
+                towerToPlace = new Tower(AssetManager.towerTex, towerPos, towerSize);
+            }
+            else
+            {
+                towerToPlace.Position = towerPos;
+            }
+
+            towerManager.Update(deltaTime, bulletManager, enemyManager);
+
+            enemyManager.Update(deltaTime, path);
+
+            bulletManager.Update(deltaTime, enemyManager);
 
             base.Update(gameTime);
         }
@@ -173,34 +152,31 @@ namespace TowerDefense
             //renderTarget.SaveAsPng(file, renderTarget.Width, renderTarget.Height);
             spriteBatch.Draw(AssetManager.backgroundTex, Vector2.Zero, Color.White);
 
-
-            foreach (Vector2 point in points)
+            //foreach (Vector2 point in points)
             {
                 path.Draw(spriteBatch);
                 path.DrawPoints(spriteBatch);
             }
 
-            foreach (GameObject gameObject in objectList)
+            foreach (Tower tower in towerManager.towerList)
             {
-                gameObject.Draw(spriteBatch);
+                tower.Draw(spriteBatch);
             }
 
             foreach (SlimeEnemy slime in enemyManager.slimeEnemyList)
             {
-
-                slime.Draw(spriteBatch, path);
-
+                slime.Draw(spriteBatch);
             }
-
-            tower.Draw(spriteBatch);
 
             foreach (Bullet bullet in bulletManager.bulletList)
             {
                 bullet.Draw(spriteBatch);
-
             }
 
+            towerToPlace?.Draw(spriteBatch);
+
             spriteBatch.End();
+
             base.Draw(gameTime);
         }
 
@@ -212,21 +188,22 @@ namespace TowerDefense
             }
             File.WriteAllLines("Points.csv", stringofPoints);
         }
+
         public void WriteToFile(string csv)
         {
             string previous = File.ReadAllText(csv);
 
         }
+
         public List<Vector2> LoadPointsForMap()
         {
-
             string[] pointStrings = File.ReadAllLines("Points.csv");
             points = new List<Vector2>();
 
             foreach (string pointString in pointStrings)
             {
                 string[] tokens = pointString.Split(",");
-                Vector2 point = new Vector2(
+                Vector2 point = new(
                             Convert.ToInt32(tokens[0]),
                             Convert.ToInt32(tokens[1]));
                 points.Add(point);
@@ -239,27 +216,29 @@ namespace TowerDefense
         {
             GraphicsDevice.SetRenderTarget(renderTarget);
             GraphicsDevice.Clear(Color.Transparent);
+
             spriteBatch.Begin();
 
-            foreach (GameObject gameObject in objectList)
+            foreach (Tower tower in towerManager.towerList)
             {
-                gameObject.Draw(spriteBatch);
+                tower.Draw(spriteBatch);
             }
-            spriteBatch.Draw(AssetManager.renderBackGroundTex, Vector2.Zero, Color.White); //Equivelent till bakgrunden här
 
+            spriteBatch.Draw(AssetManager.renderBackGroundTex, Vector2.Zero, Color.White); //Equivelent till bakgrunden här
 
             spriteBatch.End();
 
             GraphicsDevice.SetRenderTarget(null);
         }
-        public bool CanPlace(GameObject gameObject)
+
+        public bool CanPlace(Tower tower)
         {
-            Color[] targetPixels = new Color[gameObject.Texture.Width * gameObject.Texture.Height];
+            Color[] targetPixels = new Color[tower.Texture.Width * tower.Texture.Height];
             Color[] pixels2 = new Color[targetPixels.Length];
-            gameObject.Texture.GetData<Color>(pixels2);
+            tower.Texture.GetData(pixels2);
             try
             {
-                renderTarget.GetData(0, gameObject.HitBox, targetPixels, 0, targetPixels.Length);
+                renderTarget.GetData(0, tower.HitBox.ToRectangle(), targetPixels, 0, targetPixels.Length);
             }
             catch
             {
@@ -278,62 +257,38 @@ namespace TowerDefense
             spawnTimer -= deltaTime;
             if (spawnTimer <= 0)
             {
-                slimeEnemy = new SlimeEnemy(AssetManager.slimeRunTex, slimePos, slimeHitBox);
+                SlimeEnemy slimeEnemy = new(AssetManager.slimeRunTex, path.GetPos(0), slimeSize);
                 enemyManager.AddEnemy(slimeEnemy);
-                spawnTimer = 3f;
+                spawnTimer = spawnDelay;
             }
         }
 
-        internal void PlacingTower(GameTime gameTime, float deltaTime)
+        internal bool TryPlaceTower(Tower tower)
         {
-            if (mouseState.LeftButton == ButtonState.Pressed && 
-                oldMouseState.LeftButton == ButtonState.Released &&
-                CanPlace(tower))
-            {
-                tower.color = Color.White;
-                objectList.Add(tower);
-                placed = true;
-            }
-
-            if (CanPlace(tower))
-            {
-                tower.color = Color.LightGreen;
-            }
-            else if (!CanPlace(tower))
+            bool canPlace = CanPlace(tower);
+            if (!canPlace)
             {
                 tower.color = Color.MediumVioletRed;
+                return false;
             }
 
-            oldMouseState = Mouse.GetState();
-
-            foreach (Tower tower in objectList)
+            if (Input.LeftClick())
             {
-                if (placed)
-                {
-                    shootDelay -= deltaTime;
-                    if (shootDelay <= 0)
-                    {
-                        shootDelay = 2;
+                tower.color = Color.White;
+                tower.placed = true;
 
-                        //for (int i = 0; i < 100; i++)
-                        {
-                            tower.CreateBullet(enemyManager.slimeEnemyList, gameTime);
-                        }
-                    }
-
-                }
+                towerManager.AddTower(tower);
+                return true;
             }
-        }
 
+            tower.color = Color.LightGreen;
+            return false;
+        }
     }
 }
 
 //Sätt in detta i Update för att få punkt/path editorn:
-//oldMouseState = mouseState;
-//mouseState = Mouse.GetState();
-
 //Vector2 mousePos = new Vector2(mouseState.Position.X, mouseState.Position.Y);
-//KeyMouseReader.Update();
 
 //if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
 //{

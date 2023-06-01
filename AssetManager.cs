@@ -1,14 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System.IO;
-using System;
-using Microsoft.Xna.Framework.Content;
-using System.Drawing.Drawing2D;
-using Microsoft.Xna.Framework.Media;
-using Microsoft.Xna.Framework.Audio;
 
-namespace MarioTest
+namespace TowerDefense
 {
     public static class AssetManager
     {

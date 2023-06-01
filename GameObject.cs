@@ -1,44 +1,26 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
+using MonoGame.Extended;
 
 namespace TowerDefense
 {
-    public class GameObject
+    public abstract class GameObject
     {
-        protected Texture2D tex;
-        protected Vector2 pos;
-        protected Rectangle hitBox;
+        public Vector2 Position;
+        
+        protected Size2 size;
 
-
-        public GameObject(Texture2D tex, Vector2 pos, Rectangle hitBox)
+        public GameObject(Vector2 pos, Size2 size)
         {
-            this.tex = tex;
-            this.pos = pos;
-            this.hitBox = hitBox;
+            this.Position = pos;
+            this.size = size;
         }
 
-        virtual public void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(tex,
-                pos,
-                Color.White);
-        }
+        public abstract void Draw(SpriteBatch spriteBatch);
 
-        public Vector2 Pos
+        public RectangleF HitBox
         {
-            get { return pos; }
-            set { pos = value; }
-        }
-        public Texture2D Texture
-        {
-            get { return tex; }
-        }
-        public Rectangle HitBox
-        {
-            get { return hitBox; }
-            set { hitBox = value; }
+            get { return new RectangleF(Position, size); }
         }
     }
 }

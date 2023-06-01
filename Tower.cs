@@ -1,60 +1,79 @@
-﻿using MarioTest;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
+using MonoGame.Extended;
 
 namespace TowerDefense
 {
-    internal class Tower : GameObject
+    public class Tower : GameObject
     {
+        protected Texture2D tex;
+
         public Color color;
         public bool placed;
-        BulletManager bulletManager;
-        public Tower(Texture2D tex, Vector2 pos, Rectangle hitBox, bool placed, BulletManager bulletManager) : base(tex, pos, hitBox)
+
+        float shootDelay;
+
+        public Texture2D Texture => tex;
+
+        public Tower(Texture2D tex, Vector2 pos, Size2 size) : base(pos, size)
         {
-            this.placed = placed;
-            this.bulletManager = bulletManager;
+            this.tex = tex;
         }
 
-        public void Update()
+        public virtual void Update(
+            float deltaTime,
+            BulletManager bulletManager,
+            EnemyManager enemyManager)
         {
+            shootDelay -= deltaTime;
+            if (shootDelay <= 0)
+            {
+                shootDelay = 1f;
+
+                for (int i = 0; i < 1; i++)
+                {
+                    CreateBullet(bulletManager, enemyManager);
+                }
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(tex, pos, color);
+            spriteBatch.Draw(tex, Position, color);
         }
 
-        internal void CreateBullet(List<SlimeEnemy> slimeEnemyList, GameTime gameTime)
+        internal void CreateBullet(BulletManager bulletManager, EnemyManager enemyManager)
         {
-            if (slimeEnemyList.Count > 0 && placed)
+            if (!placed)
             {
-                Vector2 bulletStartPos = Pos;
-                Bullet bullet = new Bullet(AssetManager.bulletTex, bulletStartPos, new Rectangle(0, 0, AssetManager.bulletTex.Width / 6, AssetManager.bulletTex.Height), slimeEnemyList);
-                bulletManager.bulletList.Add(bullet);
+                return;
+            }
+            if (enemyManager.slimeEnemyList.Count <= 0)
+            {
+                return;
+            }
 
-                SlimeEnemy? lastSlime = null;
-                float lastDistSqr = float.MaxValue;
+            Vector2 bulletStartPos = Position;
+            Bullet bullet = new(AssetManager.bulletTex, bulletStartPos, new Size2(AssetManager.bulletTex.Width / 6, AssetManager.bulletTex.Height));
+            bulletManager.bulletList.Add(bullet);
 
-                foreach (SlimeEnemy slime in slimeEnemyList)
+            SlimeEnemy lastSlime = null;
+            float lastDistSqr = float.MaxValue;
+
+            foreach (SlimeEnemy slime in enemyManager.slimeEnemyList)
+            {
+                float distSqr = Vector2.DistanceSquared(slime.Position, bullet.Position);
+                if (distSqr <= lastDistSqr)
                 {
-                    float distSqr = Vector2.DistanceSquared(slime.Pos, bullet.Pos);
-                    if (distSqr <= lastDistSqr)
-                    {
-                        lastSlime = slime;
-                        lastDistSqr = distSqr;
-                    }
-                }
-
-                if (lastSlime != null)
-                {
-                    bullet.direction = lastSlime.Pos;
+                    lastSlime = slime;
+                    lastDistSqr = distSqr;
                 }
             }
 
-
+            if (lastSlime != null)
+            {
+                bullet.direction = lastSlime.Position;
+            }
         }
-
-
     }
 }

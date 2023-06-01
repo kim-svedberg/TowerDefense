@@ -1,20 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
-using System;
 using MonoGame.Extended;
 using Spline;
-using System.IO;
-using MarioTest;
-using MonoGame.Extended.Timers;
-using SharpDX.Direct3D9;
 
 namespace TowerDefense
 {
-    internal class SlimeEnemy : GameObject
+    public class SlimeEnemy : GameObject
     {
-        
+        Texture2D tex;
         Rectangle srcRec;
         SpriteEffects spriteEffects;
 
@@ -26,38 +19,31 @@ namespace TowerDefense
         public int health = 3;
         public float damageCooldown = 3f;
 
+        public bool IsAlive => health > 0;
 
-        public SlimeEnemy(Texture2D tex,
-            Vector2 pos, 
-            Rectangle hitBox) 
-            : base(tex, pos, hitBox)
+        public SlimeEnemy(Texture2D tex, Vector2 pos, Size2 size)
+            : base(pos, size)
         {
+            this.tex = tex;
             srcRec = new Rectangle(0, 0, AssetManager.slimeRunTex.Width / 4, AssetManager.slimeRunTex.Height);
+        }
 
-        } 
-
-        public void Update(GameTime gameTime, SimplePath path)
+        public void Update(float deltaTime, SimplePath path)
         {
-            hitBox.Location = new Vector2((int)pos.X, (int)pos.Y).ToPoint();
+            steps += deltaTime * 50;
 
-            steps++;
-            pos = path.GetPos(steps);
-
-            if (steps == 1500)
-            {
-                spriteEffects = SpriteEffects.FlipHorizontally;
-
-            }
+            Position = path.GetPos(steps);
 
             //Animation(gameTime);
         }
 
-        public void Draw(SpriteBatch spriteBatch, SimplePath path)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             //if (floatPosition < path.endT)
             {
-                spriteBatch.Draw(tex,
-                    pos,
+                spriteBatch.Draw(
+                    tex,
+                    Position,
                     srcRec,
                     Color.White,
                     0,
@@ -67,7 +53,7 @@ namespace TowerDefense
                     0);
             }
 
-            spriteBatch.DrawRectangle(hitBox, Color.Red, 1);
+            //spriteBatch.DrawRectangle(HitBox, Color.Red, 1);
             //spriteBatch.DrawRectangle(srcRec, Color.AliceBlue, 1);
         }
 
@@ -75,6 +61,7 @@ namespace TowerDefense
         {
             steps = path.beginT;
         }
+
         public void Animation(GameTime gameTime)
         {
             frameTimer -= gameTime.ElapsedGameTime.TotalMilliseconds;
