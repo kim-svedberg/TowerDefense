@@ -3,8 +3,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using Spline;
 using System.Collections.Generic;
 using System.Drawing;
+
 
 
 namespace TowerDefense
@@ -64,6 +66,7 @@ namespace TowerDefense
                     }
                 }
             }
+
 
             foreach (Bullet bullet in bulletsToRemove)
             {

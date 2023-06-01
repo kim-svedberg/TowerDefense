@@ -3,13 +3,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
-using MonoGame.Extended.Timers;
 using Spline;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
+using WinForm;
 
 namespace TowerDefense
 {
@@ -26,6 +26,7 @@ namespace TowerDefense
         Tower tower;
         SlimeEnemy slimeEnemy;
         Bullet bullet;
+        Form1 Form1;
 
         public SimplePath path;
         MouseState mouseState, oldMouseState = Mouse.GetState();
@@ -34,6 +35,7 @@ namespace TowerDefense
         List<string> stringofPoints = new List<string>();
         List<Vector2> points;
         List<GameObject> objectList = new List<GameObject>();
+        List<Tower> towerList = new List<Tower>();
 
 
         Rectangle slimeHitBox;
@@ -60,6 +62,8 @@ namespace TowerDefense
             Window.AllowUserResizing = true;
 
             Window.ClientSizeChanged += Window_ClientSizeChanged;
+
+            Form1 = new Form1();
         }
 
         private void Window_ClientSizeChanged(object sender, EventArgs e)
@@ -97,19 +101,11 @@ namespace TowerDefense
                 }
             }
 
-
-            for (int i = 0; i < 3; i++)
-            {
-
-            }
-
-
             foreach (SlimeEnemy slime in enemyManager.slimeEnemyList)
             {
                 slime.SlimePosForPath(path);
             }
 
-            tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox, placed);
         }
 
         protected override void Update(GameTime gameTime)
@@ -120,13 +116,35 @@ namespace TowerDefense
             float deltaTime = gameTime.GetElapsedSeconds();
 
             slimeHitBox = new Rectangle((int)slimePos.X, (int)slimePos.Y, AssetManager.slimeRunTex.Width / 4 - 80, AssetManager.slimeRunTex.Height - 80);
-            tower.HitBox = new Rectangle(mouseState.X, mouseState.Y, AssetManager.towerTex.Width, AssetManager.towerTex.Height);
+            
+            towerHitBox = new Rectangle(mouseState.X, mouseState.Y, AssetManager.towerTex.Width, AssetManager.towerTex.Height);
+            towerPos = new Vector2(mouseState.X, mouseState.Y);
+            tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox, placed, bulletManager);
 
-            tower.Pos = new Vector2(mouseState.X, mouseState.Y);
 
+            foreach (SlimeEnemy slime in enemyManager.slimeEnemyList)
+            {
+
+                slime.Update(gameTime, path);
+
+            }
+
+            foreach (Bullet bullet in bulletManager.bulletList)
+            {
+
+                bullet.Update(gameTime);
+
+            }
 
             mouseState = Mouse.GetState();
             keyState = Keyboard.GetState();
+
+            //if(keyState.IsKeyDown(Keys.B) && oldKeyState == keyState.IsKeyUp(Keys.B))
+            {
+                //Leta upp hur man gör det här. När man trycker på B = spawna towern som ska följa musen. 
+                //tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox, placed, bulletManager);
+
+            }
 
             SpawnEnemies(deltaTime);
             PlacingTower(gameTime, deltaTime);
@@ -255,31 +273,6 @@ namespace TowerDefense
             return true;
 
         }
-        internal void CreateBullet(Tower tower, List<SlimeEnemy> slimeEnemyList, GameTime gameTime)
-        {
-            Vector2 bulletStartPos = tower.Pos;
-
-            bullet = new Bullet(AssetManager.bulletTex, bulletStartPos, new Rectangle(0, 0, AssetManager.bulletTex.Width / 6, AssetManager.bulletTex.Height), slimeEnemyList);
-            bulletManager.bulletList.Add(bullet);
-
-            SlimeEnemy? lastSlime = null;
-            float lastDistSqr = float.MaxValue;
-
-            foreach (SlimeEnemy slime in slimeEnemyList)
-            {
-                float distSqr = Vector2.DistanceSquared(slime.Pos, bullet.Pos);
-                if (distSqr <= lastDistSqr)
-                {
-                    lastSlime = slime;
-                    lastDistSqr = distSqr;
-                }
-            }
-
-            if (lastSlime != null)
-            {
-                bullet.direction = lastSlime.Pos;
-            }
-        }
         internal void SpawnEnemies(float deltaTime)
         {
             spawnTimer -= deltaTime;
@@ -290,21 +283,21 @@ namespace TowerDefense
                 spawnTimer = 3f;
             }
         }
+
         internal void PlacingTower(GameTime gameTime, float deltaTime)
         {
-            if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released && CanPlace(tower))
+            if (mouseState.LeftButton == ButtonState.Pressed && 
+                oldMouseState.LeftButton == ButtonState.Released &&
+                CanPlace(tower))
             {
                 tower.color = Color.White;
                 objectList.Add(tower);
                 placed = true;
-                tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox, placed);
-
             }
 
             if (CanPlace(tower))
             {
                 tower.color = Color.LightGreen;
-
             }
             else if (!CanPlace(tower))
             {
@@ -312,20 +305,6 @@ namespace TowerDefense
             }
 
             oldMouseState = Mouse.GetState();
-
-            foreach (SlimeEnemy slime in enemyManager.slimeEnemyList)
-            {
-
-                slime.Update(gameTime, path);
-
-            }
-
-            foreach (Bullet bullet in bulletManager.bulletList)
-            {
-
-                bullet.Update(gameTime);
-
-            }
 
             foreach (Tower tower in objectList)
             {
@@ -338,7 +317,7 @@ namespace TowerDefense
 
                         //for (int i = 0; i < 100; i++)
                         {
-                            CreateBullet(tower, enemyManager.slimeEnemyList, gameTime);
+                            tower.CreateBullet(enemyManager.slimeEnemyList, gameTime);
                         }
                     }
 
