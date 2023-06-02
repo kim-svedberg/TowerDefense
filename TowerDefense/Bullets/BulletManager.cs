@@ -1,7 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using TowerDefense.Enemies;
 
-namespace TowerDefense
+namespace TowerDefense.Bulets
 {
     public class BulletManager
     {
@@ -51,4 +52,4 @@ namespace TowerDefense
             }
         }
     }
-}     
+}

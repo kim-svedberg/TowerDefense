@@ -6,13 +6,15 @@ using Spline;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using TowerDefense.Bulets;
+using TowerDefense.Enemies;
+using TowerDefense.Towers;
 using WinForm;
 
 namespace TowerDefense
 {
     public class Game1 : Game
     {
-        //Decreasement for-loop istället för incr. 
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private RenderTarget2D renderTarget;
@@ -30,7 +32,7 @@ namespace TowerDefense
         List<string> stringofPoints = new();
         List<Vector2> points;
 
-        Size2 slimeSize;
+        Size2 slimeSize; //Size2 = en width och en height
         Size2 towerSize;
 
         Vector2 towerPos;

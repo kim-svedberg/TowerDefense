@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Spline;
 
-namespace TowerDefense
+namespace TowerDefense.Enemies
 {
     public class EnemyManager
     {

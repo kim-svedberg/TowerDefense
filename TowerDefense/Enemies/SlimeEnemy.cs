@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using Spline;
 
-namespace TowerDefense
+namespace TowerDefense.Enemies
 {
     public class SlimeEnemy : GameObject
     {
@@ -69,7 +69,7 @@ namespace TowerDefense
             {
                 frameTimer = frameInterval;
                 frame++;
-                srcRec.X = (frame % 4) * (AssetManager.bulletTex.Width / 4);
+                srcRec.X = frame % 4 * (AssetManager.bulletTex.Width / 4);
             }
         }
     }

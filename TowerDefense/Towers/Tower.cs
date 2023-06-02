@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using TowerDefense.Bulets;
+using TowerDefense.Enemies;
 
-namespace TowerDefense
+namespace TowerDefense.Towers
 {
     public class Tower : GameObject
     {
