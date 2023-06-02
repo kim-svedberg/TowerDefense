@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using TowerDefense.Bullets;
 using TowerDefense.Enemies;
+using TowerDefense.Particles;
 using TowerDefense.Towers;
 using WinForm;
 
@@ -25,6 +26,7 @@ namespace TowerDefense
         BulletManager bulletManager = new();
 
         Tower towerToPlace;
+        ParticleSystem particleSystem;
 
         Form1 form1;
 
@@ -93,6 +95,9 @@ namespace TowerDefense
             {
                 slime.SlimePosForPath(path);
             }
+
+            particleSystem = new ParticleSystem(AssetManager.particleTextures);
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -137,9 +142,11 @@ namespace TowerDefense
 
             towerManager.Update(deltaTime, bulletManager, enemyManager);
 
-            enemyManager.Update(deltaTime, path);
+            enemyManager.Update(deltaTime, path, particleSystem);
 
             bulletManager.Update(deltaTime, enemyManager);
+
+            particleSystem.Update();
 
             base.Update(gameTime);
         }
@@ -165,6 +172,8 @@ namespace TowerDefense
             enemyManager.Draw(spriteBatch);
 
             bulletManager.Draw(spriteBatch);
+
+            particleSystem.Draw(spriteBatch);
 
             spriteBatch.End();
 

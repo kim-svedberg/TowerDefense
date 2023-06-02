@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.TextureAtlases;
+using System.Collections.Generic;
 
 namespace TowerDefense
 {
@@ -15,6 +16,9 @@ namespace TowerDefense
         public static Texture2D potTex;
         public static TextureRegion2D iceTowerTex;
         public static TextureRegion2D[] iceBulletTex;
+        public static List<TextureRegion2D> particleTextures;
+
+
 
         public static void LoadTextures(ContentManager content)
         {
@@ -36,7 +40,11 @@ namespace TowerDefense
 
             iceTowerTex = new TextureRegion2D(content.Load<Texture2D>("flower"), new Rectangle(12, 105, 54, 72));
             iceBulletTex = new TextureRegion2D[] { new(content.Load<Texture2D>("snowball")) };
-
+            
+            particleTextures = new List<TextureRegion2D>();
+            particleTextures.Add(new TextureRegion2D(content.Load<Texture2D>("circle")));
+            particleTextures.Add(new TextureRegion2D(content.Load<Texture2D>("star")));
+            particleTextures.Add(new TextureRegion2D(content.Load<Texture2D>("diamond")));
 
         }
     }
