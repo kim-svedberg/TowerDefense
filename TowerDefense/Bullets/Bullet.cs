@@ -2,38 +2,37 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using MonoGame.Extended.TextureAtlases;
+using TowerDefense.Enemies;
 
-namespace TowerDefense
+namespace TowerDefense.Bullets
 {
     public class Bullet : GameObject
     {
-        Texture2D tex;
-        Rectangle srcRec;
+        TextureRegion2D[] frames;
 
-        private int frame = 100;
+        private int frame = 0;
         private double frameTimer, frameInterval = 100;
 
         public Vector2 direction;
-        float speed = 3;
+        protected float speed = 3;
 
         public int health;
-        public float existingTime = 3f;
+        protected float existingTime = 3f;
 
         public bool IsAlive => health > 0 && existingTime > 0;
 
-        public Bullet(Texture2D tex, Vector2 pos, Size2 size) : base(pos, size)
+        public Bullet(TextureRegion2D[] frames, Vector2 pos, Size2 size) : base(pos, size)
         {
-            this.tex = tex;
-            srcRec = new Rectangle(0, 0, AssetManager.bulletTex.Width / 6, AssetManager.bulletTex.Height);
+            this.frames = frames;
             health = 1;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(
-                tex,
+                frames[frame],
                 Position,
-                srcRec,
                 Color.White);
 
             //spriteBatch.DrawRectangle(HitBox, Color.Red, 1);
@@ -41,6 +40,8 @@ namespace TowerDefense
 
         public void Update(float deltaTime)
         {
+            existingTime -= deltaTime;
+
             Animation(deltaTime);
 
             Position += GetDirection(direction) * speed;
@@ -58,9 +59,17 @@ namespace TowerDefense
             if (frameTimer <= 0)
             {
                 frameTimer = frameInterval;
-                frame++;
-                srcRec.X = (frame % 6) * (AssetManager.bulletTex.Width / 6);
+                frame = (frame + 1) % frames.Length;
             }
+        }
+
+        public virtual bool OnHit(SlimeEnemy enemy)
+        {
+            enemy.health--;
+            
+            health--;
+
+            return !IsAlive;
         }
     }
 }

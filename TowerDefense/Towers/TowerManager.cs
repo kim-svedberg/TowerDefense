@@ -1,13 +1,13 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using TowerDefense.Bulets;
+using TowerDefense.Bullets;
 using TowerDefense.Enemies;
 
 namespace TowerDefense.Towers
 {
     public class TowerManager
     {
-        public List<Tower> towerList = new();
+        private List<Tower> towerList = new();
 
         public void AddTower(Tower tower)
         {

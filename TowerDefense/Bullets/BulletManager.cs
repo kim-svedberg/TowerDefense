@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using TowerDefense.Enemies;
 
-namespace TowerDefense.Bulets
+namespace TowerDefense.Bullets
 {
     public class BulletManager
     {
@@ -24,17 +24,13 @@ namespace TowerDefense.Bulets
 
                     if (bullet.HitBox.Intersects(enemy.HitBox))
                     {
-                        enemy.health--;
-                        bullet.health--;
-
-                        if (!bullet.IsAlive)
+                        if (bullet.OnHit(enemy))
                         {
                             break;
                         }
                     }
                 }
 
-                bullet.existingTime -= deltaTime;
                 if (!bullet.IsAlive)
                 {
                     // Swap last bullet into current slot

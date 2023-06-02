@@ -1,23 +1,26 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using TowerDefense.Bulets;
+using MonoGame.Extended.TextureAtlases;
+using TowerDefense.Bullets;
+using TowerDefense.Bullets;
 using TowerDefense.Enemies;
 
 namespace TowerDefense.Towers
 {
     public class Tower : GameObject
     {
-        protected Texture2D tex;
+        protected TextureRegion2D tex;
 
         public Color color;
         public bool placed;
 
-        float shootDelay;
+        protected float shootDelay;
+        protected float shootDelayTime = 1f;
 
-        public Texture2D Texture => tex;
+        public TextureRegion2D Texture => tex;
 
-        public Tower(Texture2D tex, Vector2 pos, Size2 size) : base(pos, size)
+        public Tower(TextureRegion2D tex, Vector2 pos, Size2 size) : base(pos, size)
         {
             this.tex = tex;
         }
@@ -30,11 +33,11 @@ namespace TowerDefense.Towers
             shootDelay -= deltaTime;
             if (shootDelay <= 0)
             {
-                shootDelay = 1f;
+                shootDelay = shootDelayTime;
 
                 for (int i = 0; i < 1; i++)
                 {
-                    CreateBullet(bulletManager, enemyManager);
+                    TryAttack(bulletManager, enemyManager);
                 }
             }
         }
@@ -44,7 +47,7 @@ namespace TowerDefense.Towers
             spriteBatch.Draw(tex, Position, color);
         }
 
-        internal void CreateBullet(BulletManager bulletManager, EnemyManager enemyManager)
+        protected virtual void TryAttack(BulletManager bulletManager, EnemyManager enemyManager)
         {
             if (!placed)
             {
@@ -55,8 +58,7 @@ namespace TowerDefense.Towers
                 return;
             }
 
-            Vector2 bulletStartPos = Position;
-            Bullet bullet = new(AssetManager.bulletTex, bulletStartPos, new Size2(AssetManager.bulletTex.Width / 6, AssetManager.bulletTex.Height));
+            Bullet bullet = CreateBullet(Position);
             bulletManager.bulletList.Add(bullet);
 
             SlimeEnemy lastSlime = null;
@@ -76,6 +78,12 @@ namespace TowerDefense.Towers
             {
                 bullet.direction = lastSlime.Position;
             }
+        }
+
+        protected virtual Bullet CreateBullet(Vector2 startPos)
+        {
+            Bullet bullet = new(AssetManager.bulletTex, startPos, AssetManager.bulletTex[0].Size);
+            return bullet;
         }
     }
 }

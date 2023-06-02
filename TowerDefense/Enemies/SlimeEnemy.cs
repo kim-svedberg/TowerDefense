@@ -19,6 +19,8 @@ namespace TowerDefense.Enemies
         public int health = 3;
         public float damageCooldown = 3f;
 
+        public float speedFactor = 1f;
+
         public bool IsAlive => health > 0;
 
         public SlimeEnemy(Texture2D tex, Vector2 pos, Size2 size)
@@ -30,7 +32,7 @@ namespace TowerDefense.Enemies
 
         public void Update(float deltaTime, SimplePath path)
         {
-            steps += deltaTime * 50;
+            steps += deltaTime * 50 * speedFactor;
 
             Position = path.GetPos(steps);
 
@@ -69,7 +71,7 @@ namespace TowerDefense.Enemies
             {
                 frameTimer = frameInterval;
                 frame++;
-                srcRec.X = frame % 4 * (AssetManager.bulletTex.Width / 4);
+                srcRec.X = frame % 4 * (AssetManager.slimeRunTex.Width / 4);
             }
         }
     }

@@ -2,11 +2,12 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using MonoGame.Extended.TextureAtlases;
 using Spline;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using TowerDefense.Bulets;
+using TowerDefense.Bullets;
 using TowerDefense.Enemies;
 using TowerDefense.Towers;
 using WinForm;
@@ -33,8 +34,7 @@ namespace TowerDefense
         List<Vector2> points;
 
         Size2 slimeSize; //Size2 = en width och en height
-        Size2 towerSize;
-
+        
         Vector2 towerPos;
 
         int renderWidth = 800;
@@ -107,14 +107,7 @@ namespace TowerDefense
 
             slimeSize = new Size2(AssetManager.slimeRunTex.Width / 4 - 80, AssetManager.slimeRunTex.Height - 80);
 
-            towerSize = new Size2(AssetManager.towerTex.Width, AssetManager.towerTex.Height);
             towerPos = new Vector2(Input.mouseState.X, Input.mouseState.Y);
-
-            //if(keyState.IsKeyDown(Keys.B) && oldKeyState == keyState.IsKeyUp(Keys.B))
-            {
-                //Leta upp hur man gör det här. När man trycker på B = spawna towern som ska följa musen. 
-                //tower = new Tower(AssetManager.towerTex, towerPos, towerHitBox, placed, bulletManager);
-            }
 
             SpawnEnemies(deltaTime);
 
@@ -123,11 +116,21 @@ namespace TowerDefense
                 towerToPlace = null;
             }
 
-            if (towerToPlace == null)
+            //Pressing 1 = regular tower. 2 = Ice tower. 0 = no tower. 
+            if (Input.KeyPressed(Keys.D1))
             {
-                towerToPlace = new Tower(AssetManager.towerTex, towerPos, towerSize);
+                towerToPlace = new Tower(AssetManager.towerTex, towerPos, AssetManager.towerTex.Size);
             }
-            else
+            else if (Input.KeyPressed(Keys.D2))
+            {
+                towerToPlace = new IceTower(AssetManager.iceTowerTex, towerPos, AssetManager.iceTowerTex.Size);
+            }
+            else if (Input.KeyPressed(Keys.D0))
+            {
+                towerToPlace = null;
+            }
+
+            if (towerToPlace != null)
             {
                 towerToPlace.Position = towerPos;
             }
@@ -207,10 +210,7 @@ namespace TowerDefense
 
             spriteBatch.Begin();
 
-            foreach (Tower tower in towerManager.towerList)
-            {
-                tower.Draw(spriteBatch);
-            }
+            towerManager.Draw(spriteBatch, null);
 
             spriteBatch.Draw(AssetManager.renderBackGroundTex, Vector2.Zero, Color.White); //Equivelent till bakgrunden här
 
@@ -221,9 +221,10 @@ namespace TowerDefense
 
         public bool CanPlace(Tower tower)
         {
-            Color[] targetPixels = new Color[tower.Texture.Width * tower.Texture.Height];
+            TextureRegion2D reg = tower.Texture;
+            Color[] targetPixels = new Color[reg.Width * reg.Height];
             Color[] pixels2 = new Color[targetPixels.Length];
-            tower.Texture.GetData(pixels2);
+            reg.Texture.GetData(0, reg.Bounds, pixels2, 0, pixels2.Length);
             try
             {
                 renderTarget.GetData(0, tower.HitBox.ToRectangle(), targetPixels, 0, targetPixels.Length);
