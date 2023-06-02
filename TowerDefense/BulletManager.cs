@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace TowerDefense
 {
@@ -42,34 +43,12 @@ namespace TowerDefense
             }
         }
 
-        //public void CreateBullet(Tower tower, List<SlimeEnemy>slimeEnemyList, GameTime gameTime)
-        //{
-        //    bulletStartPos = tower.Pos;
-
-        //    bullet = new Bullet(AssetManager.bulletTex, bulletStartPos, new Rectangle(0, 0, AssetManager.bulletTex.Width / 6, AssetManager.bulletTex.Height), slimeEnemyList);
-        //    bulletList.Add(bullet);
-
-        //    SlimeEnemy? lastSlime = null;
-        //    float lastDistSqr = float.MaxValue;
-
-        //    foreach (SlimeEnemy slime in slimeEnemyList)
-        //    {
-        //        float distSqr = Vector2.DistanceSquared(slime.Pos, bullet.Pos);
-        //        if (distSqr <= lastDistSqr)
-        //        {
-        //            lastSlime = slime;
-        //            lastDistSqr = distSqr;
-        //        }
-        //    }
-
-        //    if (lastSlime != null)
-        //    {
-        //        bullet.direction = lastSlime.Pos;
-        //    }
-
-
-        //    HitTarget(slimeEnemyList, bullet, gameTime);
-
-        //}
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            foreach (Bullet bullet in bulletList)
+            {
+                bullet.Draw(spriteBatch);
+            }
+        }
     }
-}
+}     

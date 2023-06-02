@@ -152,28 +152,14 @@ namespace TowerDefense
             //renderTarget.SaveAsPng(file, renderTarget.Width, renderTarget.Height);
             spriteBatch.Draw(AssetManager.backgroundTex, Vector2.Zero, Color.White);
 
-            //foreach (Vector2 point in points)
-            {
-                path.Draw(spriteBatch);
-                path.DrawPoints(spriteBatch);
-            }
+            path.Draw(spriteBatch);
+            path.DrawPoints(spriteBatch);
 
-            foreach (Tower tower in towerManager.towerList)
-            {
-                tower.Draw(spriteBatch);
-            }
+            towerManager.Draw(spriteBatch, towerToPlace);
 
-            foreach (SlimeEnemy slime in enemyManager.slimeEnemyList)
-            {
-                slime.Draw(spriteBatch);
-            }
+            enemyManager.Draw(spriteBatch);
 
-            foreach (Bullet bullet in bulletManager.bulletList)
-            {
-                bullet.Draw(spriteBatch);
-            }
-
-            towerToPlace?.Draw(spriteBatch);
+            bulletManager.Draw(spriteBatch);
 
             spriteBatch.End();
 

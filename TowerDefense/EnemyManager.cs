@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 using Spline;
 
 namespace TowerDefense
@@ -26,6 +27,14 @@ namespace TowerDefense
                     slimeEnemyList[i] = slimeEnemyList[slimeEnemyList.Count - 1];
                     slimeEnemyList.RemoveAt(slimeEnemyList.Count - 1);
                 }
+            }
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            foreach (SlimeEnemy slime in slimeEnemyList)
+            {
+                slime.Draw(spriteBatch);
             }
         }
     }

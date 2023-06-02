@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace TowerDefense
 {
@@ -20,6 +21,18 @@ namespace TowerDefense
             {
                 tower.Update(deltaTime, bulletManager, enemyManager);
             }
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Tower towerToPlace)
+        {
+            foreach(Tower tower in towerList)
+            {
+                tower.Draw(spriteBatch);
+
+            }
+
+            towerToPlace?.Draw(spriteBatch);
+
         }
     }
 }
