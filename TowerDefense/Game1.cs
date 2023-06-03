@@ -7,11 +7,16 @@ using Spline;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 using TowerDefense.Bullets;
 using TowerDefense.Enemies;
 using TowerDefense.Particles;
 using TowerDefense.Towers;
-using WinForm;
+using TowerDefense.UI;
+using TowerDefense.Currencies;
+using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
+using Keys = Microsoft.Xna.Framework.Input.Keys;
+using CurrencyManager = TowerDefense.Currencies.CurrencyManager;
 
 namespace TowerDefense
 {
@@ -24,8 +29,10 @@ namespace TowerDefense
         TowerManager towerManager = new();
         EnemyManager enemyManager = new();
         BulletManager bulletManager = new();
+        CurrencyManager currencyManager = new();
 
         Tower towerToPlace;
+        TowerMenu towerMenu;
         ParticleSystem particleSystem;
 
         Form1 form1;
@@ -35,15 +42,15 @@ namespace TowerDefense
         List<string> stringofPoints = new();
         List<Vector2> points;
 
-        Size2 slimeSize; //Size2 = en width och en height
-        
         Vector2 towerPos;
+
+        Size2 slimeSize;
 
         int renderWidth = 800;
         int renderHeight = 500;
 
-        float spawnTimer = 0f;
-        float spawnDelay = 3f;
+        enum Wave { Wave1, Wave2 };
+        Wave wave;
 
         public Game1()
         {
@@ -57,6 +64,8 @@ namespace TowerDefense
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
             form1 = new Form1();
+            form1.TopLevel = false;
+            (System.Windows.Forms.Control.FromHandle(Window.Handle)).Controls.Add(form1);
             form1.Show();
         }
 
@@ -97,7 +106,9 @@ namespace TowerDefense
             }
 
             particleSystem = new ParticleSystem(AssetManager.particleTextures);
-
+            
+            Wave wave = new Wave();
+            towerMenu = new TowerMenu(currencyManager);
         }
 
         protected override void Update(GameTime gameTime)
@@ -110,11 +121,31 @@ namespace TowerDefense
 
             float deltaTime = gameTime.GetElapsedSeconds();
 
-            slimeSize = new Size2(AssetManager.slimeRunTex.Width / 4 - 80, AssetManager.slimeRunTex.Height - 80);
+            slimeSize = new Size2(AssetManager.slimeRunTex.Width / 4, AssetManager.slimeRunTex.Height);
 
             towerPos = new Vector2(Input.mouseState.X, Input.mouseState.Y);
 
-            SpawnEnemies(deltaTime);
+            switch (wave)
+            {
+                case Wave.Wave1:
+                    enemyManager.SpawnFirstWaveEnemies(deltaTime, path);
+                    if (enemyManager.IsFirstWaveComplete())
+                    {
+                        wave = Wave.Wave2;
+                        enemyManager.ResetWave();
+                    }
+                    break;
+
+                case Wave.Wave2:
+                    enemyManager.ClearWaveList();
+                    enemyManager.SpawnSecondWaveEnemies(deltaTime, path);
+                    if (enemyManager.IsSecondWaveComplete())
+                    {
+                        // Handle completion of second wave
+                    }
+                    break;
+            }
+
 
             if (towerToPlace != null && TryPlaceTower(towerToPlace))
             {
@@ -124,11 +155,26 @@ namespace TowerDefense
             //Pressing 1 = regular tower. 2 = Ice tower. 0 = no tower. 
             if (Input.KeyPressed(Keys.D1))
             {
-                towerToPlace = new Tower(AssetManager.towerTex, towerPos, AssetManager.towerTex.Size);
+                Tower regularTower;
+
+                currencyManager.TryToPurchaseTower(regularTower = new Tower(AssetManager.towerTex, towerPos, AssetManager.towerTex.Size));
+                if (currencyManager.purchased)
+                {
+                    towerToPlace = regularTower;
+
+                }
+
+
             }
             else if (Input.KeyPressed(Keys.D2))
             {
-                towerToPlace = new IceTower(AssetManager.iceTowerTex, towerPos, AssetManager.iceTowerTex.Size);
+                IceTower iceTower;
+                currencyManager.TryToPurchaseTower(iceTower = new IceTower(AssetManager.iceTowerTex, towerPos, AssetManager.iceTowerTex.Size));
+                if (currencyManager.purchased)
+                {
+                    towerToPlace = iceTower;
+
+                }
             }
             else if (Input.KeyPressed(Keys.D0))
             {
@@ -142,7 +188,7 @@ namespace TowerDefense
 
             towerManager.Update(deltaTime, bulletManager, enemyManager);
 
-            enemyManager.Update(deltaTime, path, particleSystem);
+            enemyManager.Update(deltaTime, path, particleSystem, currencyManager);
 
             bulletManager.Update(deltaTime, enemyManager);
 
@@ -164,8 +210,8 @@ namespace TowerDefense
             //renderTarget.SaveAsPng(file, renderTarget.Width, renderTarget.Height);
             spriteBatch.Draw(AssetManager.backgroundTex, Vector2.Zero, Color.White);
 
-            path.Draw(spriteBatch);
-            path.DrawPoints(spriteBatch);
+            //path.Draw(spriteBatch);
+            //path.DrawPoints(spriteBatch);
 
             towerManager.Draw(spriteBatch, towerToPlace);
 
@@ -174,6 +220,8 @@ namespace TowerDefense
             bulletManager.Draw(spriteBatch);
 
             particleSystem.Draw(spriteBatch);
+
+            towerMenu.Draw(spriteBatch);
 
             spriteBatch.End();
 
@@ -249,16 +297,6 @@ namespace TowerDefense
             }
             return true;
 
-        }
-        internal void SpawnEnemies(float deltaTime)
-        {
-            spawnTimer -= deltaTime;
-            if (spawnTimer <= 0)
-            {
-                SlimeEnemy slimeEnemy = new(AssetManager.slimeRunTex, path.GetPos(0), slimeSize);
-                enemyManager.AddEnemy(slimeEnemy);
-                spawnTimer = spawnDelay;
-            }
         }
 
         internal bool TryPlaceTower(Tower tower)

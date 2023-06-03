@@ -1,4 +1,4 @@
-﻿namespace WinForm
+﻿namespace TowerDefense
 {
     partial class Form1
     {

@@ -19,6 +19,7 @@ namespace TowerDefense.Towers
         public IceTower(TextureRegion2D tex, Vector2 pos, Size2 size) : base(tex, pos, size)
         {
             shootDelayTime = 2f;
+            price = 40;
         }
 
         protected override Bullet CreateBullet(Vector2 startPos)

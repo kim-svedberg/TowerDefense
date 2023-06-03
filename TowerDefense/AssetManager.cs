@@ -2,21 +2,32 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.TextureAtlases;
+using SharpDX.Direct3D9;
 using System.Collections.Generic;
 
 namespace TowerDefense
 {
     public static class AssetManager
     {
+        public static SpriteFont font;
+        
         public static Texture2D backgroundTex;
         public static Texture2D renderBackGroundTex;
-        public static Texture2D slimeRunTex;
-        public static TextureRegion2D towerTex;
-        public static TextureRegion2D[] bulletTex;
         public static Texture2D potTex;
+       
+        public static TextureRegion2D slimeRunTex;
+        public static TextureRegion2D tankSlimeTex;
+        public static TextureRegion2D towerTex;
         public static TextureRegion2D iceTowerTex;
+        public static TextureRegion2D towerMenuTex;
+        public static TextureRegion2D coinTex;
+        public static TextureRegion2D heartTex;
+
+        public static TextureRegion2D[] bulletTex;
         public static TextureRegion2D[] iceBulletTex;
+
         public static List<TextureRegion2D> particleTextures;
+
 
 
 
@@ -24,7 +35,8 @@ namespace TowerDefense
         {
             backgroundTex = content.Load<Texture2D>("truebg");
             renderBackGroundTex = content.Load<Texture2D>("truetransparentBG");
-            slimeRunTex = content.Load<Texture2D>("Slime_Spiked_Run");
+            slimeRunTex = new TextureRegion2D(content.Load<Texture2D>("Slime_Spiked_Run"), new Rectangle(38, 54, 46, 41));
+            tankSlimeTex = new TextureRegion2D(content.Load<Texture2D>("pinkSlimeSheetRight"), new Rectangle(145, 15, 58, 43));
             towerTex = new TextureRegion2D(content.Load<Texture2D>("flower8BIG"));
             var sparkleAtlas = content.Load<Texture2D>("sparklesprite");
             bulletTex = new TextureRegion2D[]
@@ -45,6 +57,14 @@ namespace TowerDefense
             particleTextures.Add(new TextureRegion2D(content.Load<Texture2D>("circle")));
             particleTextures.Add(new TextureRegion2D(content.Load<Texture2D>("star")));
             particleTextures.Add(new TextureRegion2D(content.Load<Texture2D>("diamond")));
+
+            towerMenuTex = new TextureRegion2D(content.Load<Texture2D>("ui"));
+
+            font = content.Load<SpriteFont>("File");
+
+            coinTex = new TextureRegion2D(content.Load<Texture2D>("coin"));
+
+            heartTex = new TextureRegion2D(content.Load<Texture2D>("heart"));
 
         }
     }

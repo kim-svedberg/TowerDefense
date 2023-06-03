@@ -21,7 +21,7 @@ namespace TowerDefense.Bullets
 
         public override bool OnHit(SlimeEnemy enemy)
         {
-            enemy.speedFactor = 0.5f;
+            enemy.speedFactor = enemy.speedFactor * 0.5f;
             return base.OnHit(enemy);
         }
 

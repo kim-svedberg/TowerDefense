@@ -10,8 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TowerDefense", "TowerDefense\TowerDefense.csproj", "{34E6C512-B101-4E8F-BA97-FA688703B57B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinForm", "WinForm\WinForm.csproj", "{32F79950-EEC9-43EF-9EDB-530BC902C760}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,10 +20,6 @@ Global
 		{34E6C512-B101-4E8F-BA97-FA688703B57B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34E6C512-B101-4E8F-BA97-FA688703B57B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34E6C512-B101-4E8F-BA97-FA688703B57B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{32F79950-EEC9-43EF-9EDB-530BC902C760}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32F79950-EEC9-43EF-9EDB-530BC902C760}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{32F79950-EEC9-43EF-9EDB-530BC902C760}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32F79950-EEC9-43EF-9EDB-530BC902C760}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

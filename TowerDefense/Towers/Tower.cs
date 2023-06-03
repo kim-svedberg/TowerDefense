@@ -18,6 +18,8 @@ namespace TowerDefense.Towers
         protected float shootDelay;
         protected float shootDelayTime = 1f;
 
+        public int price = 20;
+
         public TextureRegion2D Texture => tex;
 
         public Tower(TextureRegion2D tex, Vector2 pos, Size2 size) : base(pos, size)
