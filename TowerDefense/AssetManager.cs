@@ -12,6 +12,8 @@ namespace TowerDefense
         public static SpriteFont font;
         
         public static Texture2D backgroundTex;
+        public static Texture2D badEndBgTex;
+        public static Texture2D goodEndBgTex;
         public static Texture2D renderBackGroundTex;
         public static Texture2D potTex;
        
@@ -65,6 +67,9 @@ namespace TowerDefense
             coinTex = new TextureRegion2D(content.Load<Texture2D>("coin"));
 
             heartTex = new TextureRegion2D(content.Load<Texture2D>("heart"));
+
+            badEndBgTex = content.Load<Texture2D>("badending");
+            goodEndBgTex = content.Load<Texture2D>("goodend");
 
         }
     }

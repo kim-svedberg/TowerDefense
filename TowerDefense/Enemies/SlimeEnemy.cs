@@ -3,14 +3,12 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.TextureAtlases;
 using Spline;
-using System.IO;
 
 namespace TowerDefense.Enemies
 {
     public class SlimeEnemy : GameObject
     {
         TextureRegion2D tex;
-        SpriteEffects spriteEffects;
 
         public float steps;
 
@@ -34,15 +32,12 @@ namespace TowerDefense.Enemies
             steps += deltaTime * 50 * speedFactor;
 
             Position = path.GetPos(steps);
+
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            //if (floatPosition < path.endT)
-            {
-                spriteBatch.Draw(tex, Position, Color.White);
-
-            }
+            spriteBatch.Draw(tex, Position, Color.White);
 
             //spriteBatch.DrawRectangle(HitBox, Color.Red, 1);
             //spriteBatch.DrawRectangle(srcRec, Color.AliceBlue, 1);
@@ -60,7 +55,7 @@ namespace TowerDefense.Enemies
 
         public virtual bool OutsideOfBounds(SimplePath path)
         {
-            if(steps >= path.endT)
+            if (steps >= path.endT + 50)
             {
                 return true;
             }

@@ -175,7 +175,7 @@ namespace TowerDefense.Enemies
 
         public bool IsSecondWaveComplete()
         {
-            return waveList.Count >= enemiesWaveTwo && slimeEnemyList.Count == 0;
+            return waveList.Count == 0 && slimeEnemyList.Count == 0;
         }
 
         public void ClearWaveList()

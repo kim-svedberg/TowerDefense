@@ -25,6 +25,8 @@ namespace TowerDefense
         private SpriteBatch spriteBatch;
         private RenderTarget2D renderTarget;
 
+        Texture2D[] gameStateTex;
+
         TowerManager towerManager = new();
         EnemyManager enemyManager = new();
         BulletManager bulletManager = new();
@@ -54,6 +56,8 @@ namespace TowerDefense
         enum GameState { Menu, Game, Win, Loss }
         GameState gameState;
 
+        bool win;
+
 
         public Game1()
         {
@@ -67,9 +71,6 @@ namespace TowerDefense
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
             form1 = new Form1();
-            //form1.TopLevel = false;
-            //(System.Windows.Forms.Control.FromHandle(Window.Handle)).Controls.Add(form1);
-            //form1.Show();
         }
 
         private void Window_ClientSizeChanged(object sender, EventArgs e)
@@ -112,8 +113,10 @@ namespace TowerDefense
 
             particleSystem = new ParticleSystem(AssetManager.particleTextures);
 
-            Wave wave = new Wave();
             towerMenu = new TowerMenu(currencyManager);
+            TexBgForStates();
+
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -163,7 +166,7 @@ namespace TowerDefense
                             enemyManager.SpawnSecondWaveEnemies(deltaTime, path);
                             if (enemyManager.IsSecondWaveComplete())
                             {
-                                // Handle completion of second wave
+                                win = true;
                             }
                             break;
                     }
@@ -220,15 +223,21 @@ namespace TowerDefense
                     {
                         gameState = GameState.Loss;
                     }
-
+                    if (win)
+                    {
+                        gameState = GameState.Win;
+                    }
                     break;
 
                 case GameState.Win:
-
+                    if (Input.KeyPressed(Keys.Enter))
+                    {
+                        Exit();
+                    }
                     break;
 
                 case GameState.Loss:
-                    if(Input.KeyPressed(Keys.Enter))
+                    if (Input.KeyPressed(Keys.Enter))
                     {
                         Exit();
                     }
@@ -243,12 +252,16 @@ namespace TowerDefense
             DrawOnRenderTarget();
             spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
 
+            spriteBatch.Draw(gameStateTex[(int)gameState],
+                new Vector2(0, 0),
+                null, Color.White);
+
             if (gameState == GameState.Game)
             {
                 spriteBatch.Draw(renderTarget, Vector2.Zero, Color.White);
                 //using FileStream file = new("rendertarget.png", FileMode.Create);
                 //renderTarget.SaveAsPng(file, renderTarget.Width, renderTarget.Height);
-                spriteBatch.Draw(AssetManager.backgroundTex, Vector2.Zero, Color.White);
+                //spriteBatch.Draw(AssetManager.backgroundTex, Vector2.Zero, Color.White);
 
                 //path.Draw(spriteBatch);
                 //path.DrawPoints(spriteBatch);
@@ -263,7 +276,7 @@ namespace TowerDefense
 
                 towerMenu.Draw(spriteBatch);
             }
-            
+
             spriteBatch.End();
 
 
@@ -361,6 +374,15 @@ namespace TowerDefense
 
             tower.color = Color.LightGreen;
             return false;
+        }
+
+        public void TexBgForStates()
+        {
+            gameStateTex = new Texture2D[4];
+            gameStateTex[(int)GameState.Menu] = AssetManager.backgroundTex;
+            gameStateTex[(int)GameState.Game] = AssetManager.backgroundTex;
+            gameStateTex[(int)GameState.Loss] = AssetManager.badEndBgTex;
+            gameStateTex[(int)GameState.Win] = AssetManager.goodEndBgTex;
         }
     }
 }
