@@ -27,5 +27,10 @@ namespace TowerDefense.Enemies
             return currencyValue;
         }
 
+        public override bool OutsideOfBounds(SimplePath path)
+        {
+            return base.OutsideOfBounds(path);
+        }
+
     }
 }

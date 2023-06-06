@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.TextureAtlases;
 using Spline;
+using System.IO;
 
 namespace TowerDefense.Enemies
 {
@@ -55,6 +56,15 @@ namespace TowerDefense.Enemies
         public virtual int DropCurrency()
         {
             return currencyValue;
+        }
+
+        public virtual bool OutsideOfBounds(SimplePath path)
+        {
+            if(steps >= path.endT)
+            {
+                return true;
+            }
+            return false;
         }
 
     }

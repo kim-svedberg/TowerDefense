@@ -7,16 +7,15 @@ using Spline;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
 using TowerDefense.Bullets;
 using TowerDefense.Enemies;
 using TowerDefense.Particles;
 using TowerDefense.Towers;
 using TowerDefense.UI;
-using TowerDefense.Currencies;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
-using Keys = Microsoft.Xna.Framework.Input.Keys;
 using CurrencyManager = TowerDefense.Currencies.CurrencyManager;
+using Keys = Microsoft.Xna.Framework.Input.Keys;
+using SpriteBatch = Microsoft.Xna.Framework.Graphics.SpriteBatch;
 
 namespace TowerDefense
 {
@@ -52,6 +51,10 @@ namespace TowerDefense
         enum Wave { Wave1, Wave2 };
         Wave wave;
 
+        enum GameState { Menu, Game, Win, Loss }
+        GameState gameState;
+
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -64,9 +67,9 @@ namespace TowerDefense
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
             form1 = new Form1();
-            form1.TopLevel = false;
-            (System.Windows.Forms.Control.FromHandle(Window.Handle)).Controls.Add(form1);
-            form1.Show();
+            //form1.TopLevel = false;
+            //(System.Windows.Forms.Control.FromHandle(Window.Handle)).Controls.Add(form1);
+            //form1.Show();
         }
 
         private void Window_ClientSizeChanged(object sender, EventArgs e)
@@ -80,6 +83,8 @@ namespace TowerDefense
 
             graphics.ToggleFullScreen();
             graphics.ApplyChanges();
+
+            gameState = GameState.Menu;
         }
 
         protected override void LoadContent()
@@ -106,7 +111,7 @@ namespace TowerDefense
             }
 
             particleSystem = new ParticleSystem(AssetManager.particleTextures);
-            
+
             Wave wave = new Wave();
             towerMenu = new TowerMenu(currencyManager);
         }
@@ -121,78 +126,114 @@ namespace TowerDefense
 
             float deltaTime = gameTime.GetElapsedSeconds();
 
-            slimeSize = new Size2(AssetManager.slimeRunTex.Width / 4, AssetManager.slimeRunTex.Height);
-
-            towerPos = new Vector2(Input.mouseState.X, Input.mouseState.Y);
-
-            switch (wave)
+            switch (gameState)
             {
-                case Wave.Wave1:
-                    enemyManager.SpawnFirstWaveEnemies(deltaTime, path);
-                    if (enemyManager.IsFirstWaveComplete())
+                case GameState.Menu:
+                    form1.Show();
+                    if (form1.quitClicked)
                     {
-                        wave = Wave.Wave2;
-                        enemyManager.ResetWave();
+                        form1.Close();
+                        Exit();
+                    }
+                    if (form1.startClicked)
+                    {
+                        form1.Close();
+                        gameState = GameState.Game;
+
                     }
                     break;
 
-                case Wave.Wave2:
-                    enemyManager.ClearWaveList();
-                    enemyManager.SpawnSecondWaveEnemies(deltaTime, path);
-                    if (enemyManager.IsSecondWaveComplete())
+                case GameState.Game:
+                    slimeSize = new Size2(AssetManager.slimeRunTex.Width / 4, AssetManager.slimeRunTex.Height);
+                    towerPos = new Vector2(Input.mouseState.X, Input.mouseState.Y);
+
+                    switch (wave)
                     {
-                        // Handle completion of second wave
+                        case Wave.Wave1:
+                            enemyManager.SpawnFirstWaveEnemies(deltaTime, path);
+                            if (enemyManager.IsFirstWaveComplete())
+                            {
+                                wave = Wave.Wave2;
+                                enemyManager.ResetWave();
+                            }
+                            break;
+
+                        case Wave.Wave2:
+                            enemyManager.ClearWaveList();
+                            enemyManager.SpawnSecondWaveEnemies(deltaTime, path);
+                            if (enemyManager.IsSecondWaveComplete())
+                            {
+                                // Handle completion of second wave
+                            }
+                            break;
+                    }
+
+                    if (towerToPlace != null && TryPlaceTower(towerToPlace))
+                    {
+                        towerToPlace = null;
+                    }
+
+
+                    //Pressing 1 = regular tower. 2 = Ice tower. 0 = no tower. 
+                    if (Input.KeyPressed(Keys.D1))
+                    {
+                        Tower regularTower;
+
+                        currencyManager.TryToPurchaseTower(regularTower = new Tower(AssetManager.towerTex, towerPos, AssetManager.towerTex.Size));
+                        if (currencyManager.purchased)
+                        {
+                            towerToPlace = regularTower;
+
+                        }
+
+
+                    }
+                    else if (Input.KeyPressed(Keys.D2))
+                    {
+                        IceTower iceTower;
+                        currencyManager.TryToPurchaseTower(iceTower = new IceTower(AssetManager.iceTowerTex, towerPos, AssetManager.iceTowerTex.Size));
+                        if (currencyManager.purchased)
+                        {
+                            towerToPlace = iceTower;
+
+                        }
+                    }
+                    else if (Input.KeyPressed(Keys.D0))
+                    {
+                        towerToPlace = null;
+                    }
+
+                    if (towerToPlace != null)
+                    {
+                        towerToPlace.Position = towerPos;
+                    }
+
+                    towerManager.Update(deltaTime, bulletManager, enemyManager);
+
+                    enemyManager.Update(deltaTime, path, particleSystem, currencyManager);
+
+                    bulletManager.Update(deltaTime, enemyManager);
+
+                    particleSystem.Update();
+
+                    if (enemyManager.slimesWin)
+                    {
+                        gameState = GameState.Loss;
+                    }
+
+                    break;
+
+                case GameState.Win:
+
+                    break;
+
+                case GameState.Loss:
+                    if(Input.KeyPressed(Keys.Enter))
+                    {
+                        Exit();
                     }
                     break;
             }
-
-
-            if (towerToPlace != null && TryPlaceTower(towerToPlace))
-            {
-                towerToPlace = null;
-            }
-
-            //Pressing 1 = regular tower. 2 = Ice tower. 0 = no tower. 
-            if (Input.KeyPressed(Keys.D1))
-            {
-                Tower regularTower;
-
-                currencyManager.TryToPurchaseTower(regularTower = new Tower(AssetManager.towerTex, towerPos, AssetManager.towerTex.Size));
-                if (currencyManager.purchased)
-                {
-                    towerToPlace = regularTower;
-
-                }
-
-
-            }
-            else if (Input.KeyPressed(Keys.D2))
-            {
-                IceTower iceTower;
-                currencyManager.TryToPurchaseTower(iceTower = new IceTower(AssetManager.iceTowerTex, towerPos, AssetManager.iceTowerTex.Size));
-                if (currencyManager.purchased)
-                {
-                    towerToPlace = iceTower;
-
-                }
-            }
-            else if (Input.KeyPressed(Keys.D0))
-            {
-                towerToPlace = null;
-            }
-
-            if (towerToPlace != null)
-            {
-                towerToPlace.Position = towerPos;
-            }
-
-            towerManager.Update(deltaTime, bulletManager, enemyManager);
-
-            enemyManager.Update(deltaTime, path, particleSystem, currencyManager);
-
-            bulletManager.Update(deltaTime, enemyManager);
-
-            particleSystem.Update();
 
             base.Update(gameTime);
         }
@@ -200,30 +241,31 @@ namespace TowerDefense
         protected override void Draw(GameTime gameTime)
         {
             DrawOnRenderTarget();
-
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
             spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
 
-            spriteBatch.Draw(renderTarget, Vector2.Zero, Color.White);
-            //using FileStream file = new("rendertarget.png", FileMode.Create);
-            //renderTarget.SaveAsPng(file, renderTarget.Width, renderTarget.Height);
-            spriteBatch.Draw(AssetManager.backgroundTex, Vector2.Zero, Color.White);
+            if (gameState == GameState.Game)
+            {
+                spriteBatch.Draw(renderTarget, Vector2.Zero, Color.White);
+                //using FileStream file = new("rendertarget.png", FileMode.Create);
+                //renderTarget.SaveAsPng(file, renderTarget.Width, renderTarget.Height);
+                spriteBatch.Draw(AssetManager.backgroundTex, Vector2.Zero, Color.White);
 
-            //path.Draw(spriteBatch);
-            //path.DrawPoints(spriteBatch);
+                //path.Draw(spriteBatch);
+                //path.DrawPoints(spriteBatch);
 
-            towerManager.Draw(spriteBatch, towerToPlace);
+                towerManager.Draw(spriteBatch, towerToPlace);
 
-            enemyManager.Draw(spriteBatch);
+                enemyManager.Draw(spriteBatch);
 
-            bulletManager.Draw(spriteBatch);
+                bulletManager.Draw(spriteBatch);
 
-            particleSystem.Draw(spriteBatch);
+                particleSystem.Draw(spriteBatch);
 
-            towerMenu.Draw(spriteBatch);
-
+                towerMenu.Draw(spriteBatch);
+            }
+            
             spriteBatch.End();
+
 
             base.Draw(gameTime);
         }

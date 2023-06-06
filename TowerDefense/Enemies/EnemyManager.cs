@@ -34,6 +34,8 @@ namespace TowerDefense.Enemies
         int slimesSpawned = 0;
         int tankSpawned = 0;
 
+        public bool slimesWin;
+
 
         public void AddEnemy(SlimeEnemy slime)
         {
@@ -60,6 +62,11 @@ namespace TowerDefense.Enemies
                     // Swap last enemy into current slot
                     slimeEnemyList[i] = slimeEnemyList[slimeEnemyList.Count - 1];
                     slimeEnemyList.RemoveAt(slimeEnemyList.Count - 1);
+                }
+
+                if (enemy.OutsideOfBounds(path))
+                {
+                    slimesWin = true;
                 }
             }
         }
