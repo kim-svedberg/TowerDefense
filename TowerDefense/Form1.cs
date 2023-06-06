@@ -1,6 +1,7 @@
 using System.Windows.Forms;
 using System.Windows;
 using System;
+using System.Media;
 
 namespace TowerDefense
 {
@@ -8,10 +9,13 @@ namespace TowerDefense
     {
         public bool startClicked;
         public bool quitClicked;
+        public SoundPlayer soundPlayer;
         public Form1()
         {
             InitializeComponent();
-            
+            soundPlayer = new SoundPlayer();
+            soundPlayer.SoundLocation = @"C:\Users\kimas\OneDrive\Desktop\Projects_and_Solutions\TowerDefense\TowerDefense\Content\menuMusicWAV.wav";
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -20,6 +24,8 @@ namespace TowerDefense
             WindowState = FormWindowState.Maximized;
             TopMost = false;
             Bounds = Screen.PrimaryScreen.Bounds;
+            soundPlayer.Play();
+
         }
 
         private void lblHeader_Click(object sender, EventArgs e)

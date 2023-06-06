@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended;
 using MonoGame.Extended.TextureAtlases;
 using Spline;
@@ -71,6 +72,8 @@ namespace TowerDefense
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
             form1 = new Form1();
+            MediaPlayer.IsRepeating = true;
+
         }
 
         private void Window_ClientSizeChanged(object sender, EventArgs e)
@@ -133,6 +136,7 @@ namespace TowerDefense
             {
                 case GameState.Menu:
                     form1.Show();
+                    MediaPlayer.Play(AssetManager.menuMusic);
                     if (form1.quitClicked)
                     {
                         form1.Close();
@@ -141,7 +145,9 @@ namespace TowerDefense
                     if (form1.startClicked)
                     {
                         form1.Close();
+                        form1.soundPlayer.Stop();
                         gameState = GameState.Game;
+                        MediaPlayer.Play(AssetManager.gameMusic);
 
                     }
                     break;
@@ -222,10 +228,17 @@ namespace TowerDefense
                     if (enemyManager.slimesWin)
                     {
                         gameState = GameState.Loss;
+                        MediaPlayer.Stop();
+                        MediaPlayer.Play(AssetManager.lossMusic);
+
+
                     }
                     if (win)
                     {
                         gameState = GameState.Win;
+                        MediaPlayer.Stop();
+                        MediaPlayer.Play(AssetManager.winMusic);
+
                     }
                     break;
 

@@ -1,6 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.VisualBasic.ApplicationServices;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended.TextureAtlases;
 using SharpDX.Direct3D9;
 using System.Collections.Generic;
@@ -30,7 +32,10 @@ namespace TowerDefense
 
         public static List<TextureRegion2D> particleTextures;
 
-
+        public static Song gameMusic;
+        public static Song winMusic;
+        public static Song lossMusic;
+        public static Song menuMusic;
 
 
         public static void LoadTextures(ContentManager content)
@@ -70,6 +75,11 @@ namespace TowerDefense
 
             badEndBgTex = content.Load<Texture2D>("badending");
             goodEndBgTex = content.Load<Texture2D>("goodend");
+
+            gameMusic = content.Load<Song>("gameMusic");
+            winMusic = content.Load<Song>("winMusic");
+            lossMusic = content.Load<Song>("lossMusic");
+            menuMusic = content.Load<Song>("menuMusic");
 
         }
     }

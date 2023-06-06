@@ -104,6 +104,12 @@
 /processorParam:TextureFormat=Color
 /build:flower8BIG.png
 
+#begin gameMusic.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:gameMusic.mp3
+
 #begin goodend.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -139,6 +145,24 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:heart.png
+
+#begin lossMusic.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:lossMusic.mp3
+
+#begin menuMusic.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:menuMusic.mp3
+
+#begin menuMusicWAV.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:menuMusicWAV.wav
 
 #begin pinkslimeSheet.png
 /importer:TextureImporter
@@ -307,4 +331,10 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:ui.png
+
+#begin winMusic.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:winMusic.mp3
 
