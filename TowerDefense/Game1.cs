@@ -54,7 +54,7 @@ namespace TowerDefense
         enum Wave { Wave1, Wave2 };
         Wave wave;
 
-        enum GameState { Menu, Game, Win, Loss }
+        enum GameState { Menu, OpeningScene, Game, Win, Loss }
         GameState gameState;
 
         bool win;
@@ -146,8 +146,16 @@ namespace TowerDefense
                     {
                         form1.Close();
                         form1.soundPlayer.Stop();
-                        gameState = GameState.Game;
+                        gameState = GameState.OpeningScene;
                         MediaPlayer.Play(AssetManager.gameMusic);
+
+                    }
+                    break;
+
+                case GameState.OpeningScene:
+                    if (Continue())
+                    {
+                        gameState = GameState.Game;
 
                     }
                     break;
@@ -243,14 +251,14 @@ namespace TowerDefense
                     break;
 
                 case GameState.Win:
-                    if (Input.KeyPressed(Keys.Enter))
+                    if (Continue())
                     {
                         Exit();
                     }
                     break;
 
                 case GameState.Loss:
-                    if (Input.KeyPressed(Keys.Enter))
+                    if (Continue())
                     {
                         Exit();
                     }
@@ -391,11 +399,21 @@ namespace TowerDefense
 
         public void TexBgForStates()
         {
-            gameStateTex = new Texture2D[4];
+            gameStateTex = new Texture2D[5];
             gameStateTex[(int)GameState.Menu] = AssetManager.backgroundTex;
+            gameStateTex[(int)GameState.OpeningScene] = AssetManager.cutScene;
             gameStateTex[(int)GameState.Game] = AssetManager.backgroundTex;
             gameStateTex[(int)GameState.Loss] = AssetManager.badEndBgTex;
             gameStateTex[(int)GameState.Win] = AssetManager.goodEndBgTex;
+        }
+
+        public bool Continue()
+        {
+            if (Input.KeyPressed(Keys.Enter))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

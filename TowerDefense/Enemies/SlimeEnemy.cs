@@ -14,7 +14,7 @@ namespace TowerDefense.Enemies
 
         public int health = 3;
         public float damageCooldown = 3f;
-        protected int currencyValue = 10;
+        protected int currencyValue = 5;
 
         public float speedFactor = 1f;
 

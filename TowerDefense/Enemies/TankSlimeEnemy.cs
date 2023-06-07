@@ -18,7 +18,7 @@ namespace TowerDefense.Enemies
         {
             health = 5;
             speedFactor = 2f;
-            currencyValue = 15;
+            currencyValue = 8;
         }
 
         public override int DropCurrency()

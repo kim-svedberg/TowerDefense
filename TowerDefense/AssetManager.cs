@@ -18,6 +18,7 @@ namespace TowerDefense
         public static Texture2D goodEndBgTex;
         public static Texture2D renderBackGroundTex;
         public static Texture2D potTex;
+        public static Texture2D cutScene;
        
         public static TextureRegion2D slimeRunTex;
         public static TextureRegion2D tankSlimeTex;
@@ -80,6 +81,8 @@ namespace TowerDefense
             winMusic = content.Load<Song>("winMusic");
             lossMusic = content.Load<Song>("lossMusic");
             menuMusic = content.Load<Song>("menuMusic");
+
+            cutScene = content.Load<Texture2D>("opscene");
 
         }
     }
