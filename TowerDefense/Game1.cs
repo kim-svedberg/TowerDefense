@@ -122,6 +122,9 @@ namespace TowerDefense
 
         }
 
+        /// <summary>
+        /// Handles user input, updates game state and various game elements such as towers, enemies, bullets, and particles.
+        /// </summary>
         protected override void Update(GameTime gameTime)
         {
             Input.Update();
@@ -280,12 +283,6 @@ namespace TowerDefense
             if (gameState == GameState.Game)
             {
                 spriteBatch.Draw(renderTarget, Vector2.Zero, Color.White);
-                //using FileStream file = new("rendertarget.png", FileMode.Create);
-                //renderTarget.SaveAsPng(file, renderTarget.Width, renderTarget.Height);
-                //spriteBatch.Draw(AssetManager.backgroundTex, Vector2.Zero, Color.White);
-
-                //path.Draw(spriteBatch);
-                //path.DrawPoints(spriteBatch);
 
                 towerManager.Draw(spriteBatch, towerToPlace);
 
@@ -304,6 +301,10 @@ namespace TowerDefense
             base.Draw(gameTime);
         }
 
+        /// <summary>
+        /// Saves a list of points to the file named "Points.csv". 
+        /// It converts each point's coordinates to a string representation and writes them to the file.
+        /// </summary>
         public void SaveToFile()
         {
             foreach (Vector2 point in points)
@@ -318,6 +319,12 @@ namespace TowerDefense
             string previous = File.ReadAllText(csv);
 
         }
+
+        /// <summary>
+        /// Loads a list of points from the file named "Points.csv". 
+        /// It reads each line from the file, splits the coordinates string into X and Y values, 
+        /// converts them back to Vector2 objects, and adds them to the points list.
+        /// </summary>
 
         public List<Vector2> LoadPointsForMap()
         {
@@ -336,6 +343,11 @@ namespace TowerDefense
             return points;
 
         }
+
+        /// <summary>
+        /// Draws game elements on a render target, which is a texture used for off-screen rendering. 
+        /// It clears the render target, begins the sprite batch, and then draws eg. towers. 
+        /// </summary>
         private void DrawOnRenderTarget()
         {
             GraphicsDevice.SetRenderTarget(renderTarget);
@@ -352,6 +364,11 @@ namespace TowerDefense
             GraphicsDevice.SetRenderTarget(null);
         }
 
+        /// <summary>
+        /// Checks if a tower can be placed at a specific location on the screen. 
+        /// It retrieves the tower's texture and checks for pixel collisions between the tower and the render target. 
+        /// If non-transparent pixels overlap, it returns false, indicating that the tower can't be placed at that location.
+        /// </summary>
         public bool CanPlace(Tower tower)
         {
             TextureRegion2D reg = tower.Texture;
@@ -375,6 +392,12 @@ namespace TowerDefense
 
         }
 
+        /// <summary>
+        ///  Attempts to place a tower at a specific location on the screen. 
+        ///  It first checks if the tower can be placed by calling the CanPlace method. 
+        ///  If it can be placed, it sets the tower's color to indicate successful placement and adds it to the tower manager. 
+        ///  If the player left-clicks, the tower is considered placed, and the method returns true. Otherwise, it returns false.
+        /// </summary>
         internal bool TryPlaceTower(Tower tower)
         {
             bool canPlace = CanPlace(tower);
@@ -397,6 +420,10 @@ namespace TowerDefense
             return false;
         }
 
+        /// <summary>
+        /// Assigns different background textures to each game state. 
+        /// It initializes an array of Texture2D objects and assigns specific textures to each index based on the corresponding game state.
+        /// </summary>
         public void TexBgForStates()
         {
             gameStateTex = new Texture2D[5];
@@ -407,6 +434,10 @@ namespace TowerDefense
             gameStateTex[(int)GameState.Win] = AssetManager.goodEndBgTex;
         }
 
+        /// <summary>
+        ///  Checks if the player has pressed the Enter key. 
+        ///  If the Enter key is pressed, it returns true, indicating that the game should continue to the next state or exit.
+        /// </summary>
         public bool Continue()
         {
             if (Input.KeyPressed(Keys.Enter))
@@ -418,7 +449,7 @@ namespace TowerDefense
     }
 }
 
-//Sätt in detta i Update för att få punkt/path editorn:
+//Place in the Update method to get the point/path editor:
 //Vector2 mousePos = new Vector2(mouseState.Position.X, mouseState.Position.Y);
 
 //if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)

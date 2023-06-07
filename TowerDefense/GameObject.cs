@@ -4,6 +4,9 @@ using MonoGame.Extended;
 
 namespace TowerDefense
 {
+    /// <summary>
+    /// The base class which other classes, such as Towers and Bullets, derive from. 
+    /// </summary>
     public abstract class GameObject
     {
         public Vector2 Position;

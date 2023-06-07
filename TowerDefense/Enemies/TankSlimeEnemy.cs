@@ -13,6 +13,10 @@ namespace TowerDefense.Enemies
 {
     internal class TankSlimeEnemy : SlimeEnemy
     {
+        /// <summary>
+        /// This class inherits from the SlimeEnemy class and represents a specific type of slime enemy called "Tank".
+        /// It has more health and speed than a regular slime, but also drops a greater reward when destroyed.
+        /// </summary>
         public override bool IsAlive => base.IsAlive;
         public TankSlimeEnemy(TextureRegion2D tex, Vector2 pos, Size2 size) : base(tex, pos, size)
         {

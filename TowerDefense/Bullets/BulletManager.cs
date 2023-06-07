@@ -6,7 +6,18 @@ namespace TowerDefense.Bullets
 {
     public class BulletManager
     {
+        /// <summary>
+        /// This class is responsible for managing a collection of bullets in a game. It provides methods to update and draw the bullets.
+        /// </summary>
         public List<Bullet> bulletList = new();
+
+        /// <summary>
+        /// Called to update the state of each bullet in the collection. 
+        /// It iterates through the bullets and calls their individual Update methods, passing the elapsed time. 
+        /// It also checks for collision with the enemies managed by the EnemyManager. 
+        /// If a bullet intersects with an alive enemy, the OnHit method of the bullet is called to handle the collision. 
+        /// If the bullet is no longer alive after the collision, it is removed from the collection.
+        /// </summary>
 
         public void Update(float deltaTime, EnemyManager enemyManager)
         {

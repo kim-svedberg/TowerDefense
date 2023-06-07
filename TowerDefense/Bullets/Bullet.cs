@@ -1,14 +1,21 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.TextureAtlases;
+using System;
 using TowerDefense.Enemies;
 
 namespace TowerDefense.Bullets
 {
     public class Bullet : GameObject
     {
+        /// <summary>
+        /// This class represents the basic bullet fired by towers. 
+        /// It is responsible for managing the bullet's movement, animation, and collision behavior. 
+        /// It contains methods to update the bullet's state, animate its appearance, and handle interactions when it hits a target. 
+        /// The class also maintains properties for the bullet's frames, direction, speed, health, and existence time. 
+        /// </summary>
+
         TextureRegion2D[] frames;
 
         private int frame = 0;
@@ -47,6 +54,10 @@ namespace TowerDefense.Bullets
             Position += GetDirection(direction) * speed;
         }
 
+        /// <summary>
+        /// Calculates and returns the normalized direction vector from the bullet's position to the target position.
+        /// The direction vector points towards the target.
+        /// </summary>
         public Vector2 GetDirection(Vector2 targetPos)
         {
             Vector2 normalizedVector = Vector2.Normalize(targetPos - Position);
@@ -63,10 +74,15 @@ namespace TowerDefense.Bullets
             }
         }
 
+        /// <summary>
+        /// Handles the behavior when the bullet hits an enemy.
+        ///Decreases the health of both the enemy and the bullet.
+        /// Returns a boolean indicating whether the bullet is still alive.
+        /// </summary>
         public virtual bool OnHit(SlimeEnemy enemy)
         {
             enemy.health--;
-            
+
             health--;
 
             return !IsAlive;

@@ -11,6 +11,9 @@ using CurrencyManager = TowerDefense.Currencies.CurrencyManager;
 
 namespace TowerDefense.UI
 {
+    /// <summary>
+    /// Responsible for drawing the tower menu UI as well as the coin UI. 
+    /// </summary>
     internal class TowerMenu
     {
         Vector2 menuPos;

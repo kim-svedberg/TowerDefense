@@ -3,19 +3,21 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.TextureAtlases;
 using Spline;
 using System.Collections.Generic;
-using System.IO;
-using System.Windows.Forms;
 using TowerDefense.Particles;
 using CurrencyManager = TowerDefense.Currencies.CurrencyManager;
 
 
 namespace TowerDefense.Enemies
 {
+    /// <summary>
+    /// Manages the spawning, updating, and drawing of enemies in the game. 
+    /// It keeps track of the enemy lists, spawn timers, wave information, and handles the logic for enemy interactions.
+    /// </summary>
     public class EnemyManager
     {
         public List<SlimeEnemy> slimeEnemyList = new();
         public List<SlimeEnemy> waveList = new();
-        
+
         ParticleSystem particleSystem;
         CurrencyManager currencyManager;
 
@@ -37,12 +39,21 @@ namespace TowerDefense.Enemies
         public bool slimesWin;
 
 
+        /// <summary>
+        /// Adds a SlimeEnemy instance to the list of active enemies and the wave list.
+        /// </summary>
         public void AddEnemy(SlimeEnemy slime)
         {
             slimeEnemyList.Add(slime);
             waveList.Add(slime);
         }
 
+        /// <summary>
+        /// Updates the positions of all active enemies.
+        /// Checks if enemies are defeated and handles the currency gain and particle effects.
+        /// Removes defeated enemies from the active enemy list.
+        /// Checks if any enemies have reached the end of the path, indicating a loss for the player.
+        /// </summary>
         public void Update(float deltaTime, SimplePath path, ParticleSystem particleSystem, CurrencyManager currencyManager)
         {
             for (int i = 0; i < slimeEnemyList.Count; i++)
@@ -86,6 +97,11 @@ namespace TowerDefense.Enemies
 
         }
 
+        /// <summary>
+        /// Spawns the enemies for the first wave.
+        /// Updates the spawn timer and checks if it's time to spawn a new enemy.
+        /// Resets the spawn timer when necessary.
+        /// </summary>
         internal void SpawnFirstWaveEnemies(float deltaTime, SimplePath path)
         {
             int slimesInWave = 10;
@@ -99,7 +115,11 @@ namespace TowerDefense.Enemies
             }
         }
 
-
+        /// <summary>
+        /// Spawns the enemies for the second wave, which includes slimes and slime-tanks.
+        ///Updates the spawn timers for both slimes and tanks and checks if it's time to spawn a new enemy.
+        ///Stops spawning slimes or tanks when the desired number of each enemy type has been spawned.
+        /// </summary>
         public void SpawnSecondWaveEnemies(float deltaTime, SimplePath path)
         {
             int slimesInWave = 10;
@@ -116,7 +136,7 @@ namespace TowerDefense.Enemies
                     slimesSpawned++;
                     ResetSlimeSpawnTimer();
                 }
-                if(slimesSpawned == slimesInWave)
+                if (slimesSpawned == slimesInWave)
                 {
                     stopSpawningSlimes = true;
                 }
@@ -168,21 +188,34 @@ namespace TowerDefense.Enemies
         {
             tankSpawnTimer = tankSpawnDelay;
         }
+
+        /// <summary>
+        /// Checks if the first wave is complete by verifying if all enemies from the first wave have been defeated and no active enemies remain.
+        /// </summary>
         public bool IsFirstWaveComplete()
         {
             return waveList.Count >= enemiesWaveOne && slimeEnemyList.Count == 0;
         }
 
+        /// <summary>
+        /// Same as the method above, but for the second wave.
+        /// </summary>
         public bool IsSecondWaveComplete()
         {
             return waveList.Count == 0 && slimeEnemyList.Count == 0;
         }
 
+        /// <summary>
+        /// Clears the wave list, removing all enemies from the current wave.
+        /// </summary>
         public void ClearWaveList()
         {
             waveList.Clear();
         }
 
+        /// <summary>
+        /// Resets the counters for the number of slimes and tanks spawned in the waves.
+        /// </summary>
         public void ResetWave()
         {
             slimesSpawned = 0;
