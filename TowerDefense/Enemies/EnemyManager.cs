@@ -56,7 +56,7 @@ namespace TowerDefense.Enemies
                     currencyManager.GainCurrency(enemy.DropCurrency());
                     for (int j = 0; j < 10; j++)
                     {
-                        particleSystem.GenerateNewParticle(enemy.Position);
+                        particleSystem.GenerateNewParticle(enemy.Position, enemy.ParticleColor());
                     }
 
                     // Swap last enemy into current slot

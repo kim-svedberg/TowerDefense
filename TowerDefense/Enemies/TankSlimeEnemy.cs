@@ -19,6 +19,7 @@ namespace TowerDefense.Enemies
             health = 5;
             speedFactor = 2f;
             currencyValue = 8;
+            colorList = new List<Color>();
         }
 
         public override int DropCurrency()
@@ -30,6 +31,15 @@ namespace TowerDefense.Enemies
         public override bool OutsideOfBounds(SimplePath path)
         {
             return base.OutsideOfBounds(path);
+        }
+
+        public override List<Color> ParticleColor()
+        {
+            colorList.Add(new Color(0xff_fc_6c_85));
+            colorList.Add(new Color(0xff_fc_8e_ac));
+            colorList.Add(new Color(0xff_ff_c1_cc));
+
+            return colorList;
         }
 
     }

@@ -24,13 +24,13 @@ namespace TowerDefense.Particles
             particles = new List<Particle>();
             this.textures = textures;
 
-            colorList = new List<Color>();
-            colorList.Add(new Color(0xff_21_62_27));
-            colorList.Add(new Color(0xff_c9_e7_cc));
-            colorList.Add(new Color(0xff_50_b4_5b));
+            //colorList = new List<Color>();
+            //colorList.Add(new Color(0xff_21_62_27));
+            //colorList.Add(new Color(0xff_c9_e7_cc));
+            //colorList.Add(new Color(0xff_50_b4_5b));
         }
 
-        public Particle GenerateNewParticle(Vector2 position)
+        public Particle GenerateNewParticle(Vector2 position, List<Color> colorList)
         {
             TextureRegion2D texture = textures[random.Next(textures.Count)];
 

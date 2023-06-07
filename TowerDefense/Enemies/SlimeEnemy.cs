@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.TextureAtlases;
 using Spline;
+using System.Collections.Generic;
 
 namespace TowerDefense.Enemies
 {
@@ -17,6 +18,9 @@ namespace TowerDefense.Enemies
         protected int currencyValue = 5;
 
         public float speedFactor = 1f;
+        
+        protected List<Color> colorList;
+
 
 
         public virtual bool IsAlive => health > 0;
@@ -25,6 +29,7 @@ namespace TowerDefense.Enemies
             : base(pos, size)
         {
             this.tex = tex;
+            colorList = new List<Color>();
         }
 
         public virtual void Update(float deltaTime, SimplePath path)
@@ -60,6 +65,15 @@ namespace TowerDefense.Enemies
                 return true;
             }
             return false;
+        }
+
+        public virtual List<Color> ParticleColor()
+        {
+            colorList.Add(new Color(0xff_21_62_27));
+            colorList.Add(new Color(0xff_c9_e7_cc));
+            colorList.Add(new Color(0xff_50_b4_5b));
+
+            return colorList;
         }
 
     }
